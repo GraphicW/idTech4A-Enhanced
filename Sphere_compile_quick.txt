@@ -1,0 +1,106 @@
+﻿Sphere.cpp
+doom3/neo\idlib/Str.h(503): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+doom3/neo\idlib/Str.h(503): error C2143: syntax error: missing ',' before '&'
+doom3/neo\idlib/Str.h(544): error C2061: syntax error: identifier 'idList'
+doom3/neo\idlib/Str.h(545): error C2061: syntax error: identifier 'idList'
+doom3/neo\idlib/Str.h(546): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+doom3/neo\idlib/Str.h(546): error C2143: syntax error: missing ',' before '<'
+doom3/neo\idlib/Str.h(547): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+doom3/neo\idlib/Str.h(547): error C2143: syntax error: missing ',' before '<'
+doom3/neo\idlib/math/Vector.h(154): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(154): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(158): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(158): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(194): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(194): error C3861: 'Sqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(202): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(202): error C3861: 'RSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(228): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(228): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(240): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(240): error C3861: 'RSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(257): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(257): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(287): error C3861: 'floor': identifier not found
+doom3/neo\idlib/math/Vector.h(288): error C3861: 'floor': identifier not found
+doom3/neo\idlib/math/Vector.h(866): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(866): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(870): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(870): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(874): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(874): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(896): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(896): error C3861: 'RSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(953): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(953): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(960): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(960): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(967): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(967): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1002): error C3861: 'fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1007): error C3861: 'fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1012): error C3861: 'fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1037): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1037): error C3861: 'Sqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1050): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1050): error C3861: 'RSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1073): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1073): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1092): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1092): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1131): error C3861: 'floor': identifier not found
+doom3/neo\idlib/math/Vector.h(1132): error C3861: 'floor': identifier not found
+doom3/neo\idlib/math/Vector.h(1133): error C3861: 'floor': identifier not found
+doom3/neo\idlib/math/Vector.h(1187): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1187): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1200): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1200): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1202): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1202): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1211): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1211): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1248): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1248): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1589): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1589): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1593): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1593): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1597): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1597): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1601): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1601): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(1620): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1620): error C3861: 'Sqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1633): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1633): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(1646): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(1646): error C3861: 'RSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(2023): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2023): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(2027): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2027): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(2031): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2031): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(2035): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2035): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(2039): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2039): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(2043): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2043): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(2077): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2077): error C3861: 'Sqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(2090): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2090): error C3861: 'InvSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(2105): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2105): error C3861: 'RSqrt': identifier not found
+doom3/neo\idlib/math/Vector.h(2258): error C3861: 'Mem_Free16': identifier not found
+doom3/neo\idlib/math/Vector.h(2293): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2308): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2327): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2343): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2360): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2379): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2394): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2460): error C2653: 'idMath': is not a class or namespace name
+doom3/neo\idlib/math/Vector.h(2460): error C3861: 'Fabs': identifier not found
+doom3/neo\idlib/math/Vector.h(2460): fatal error C1003: error count exceeds 100; stopping compilation

@@ -1,0 +1,121 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdk project.properties.compileSdkVersion.toInteger()
+    buildToolsVersion project.properties.buildToolsVersion
+    ndkVersion project.properties.ndkVersion
+    //compileOptions.encoding "gbk"
+
+    defaultConfig {
+        applicationId "com.karin.idTech4Amm"
+        minSdkVersion project.properties.minSdkVersion.toInteger()
+        targetSdkVersion project.properties.targetSdkVersion.toInteger()
+        versionCode 11072
+        versionName '1.1.0harmattan72'
+         /*
+            natasha: A CSOL CT character, for my Quake II for MeeGo Harmattan port version 5 at 2018
+            verena: GC singer, for my first YouKu 3rd client for MeeGo Harmattan at 2015
+            caitlyn: the Sheriff of Piltover on LOL, for netlizard-game at 2017
+            lindaiyu: Red at 2025
+            luyiping: The Rain at 2002
+            whip: The King of Fighter character at 2019
+         */
+        versionNameSuffix 'lindaiyu'
+        buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
+        buildConfigField "int", "BUILD_SDK_VERSION", 30 + ""
+    }
+
+    /* not AIDE */
+    signingConfigs {
+        debug {
+            v1SigningEnabled true
+            v2SigningEnabled true
+            storeFile file(project.properties.storeFile)
+            storePassword project.properties.storePassword
+            keyAlias project.properties.keyAlias
+            keyPassword project.properties.keyPassword
+        }
+        release {
+            v1SigningEnabled true
+            v2SigningEnabled true
+            storeFile file(project.properties.storeFile)
+            storePassword project.properties.storePassword
+            keyAlias project.properties.keyAlias
+            keyPassword project.properties.keyPassword
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+        }
+    }
+/*    sourceSets {
+        main {
+            jniLibs.srcDirs=['libs']
+            //jni.srcDirs('src/main/jni')
+            //jniLibs.srcDirs=[]
+        }
+    }*/
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        // remove unused ffmpeg libraries
+        // remove all x86/x86-64 libraries
+        exclude "lib/x86/**"
+        exclude "lib/x86_64/**"
+        // remove all mobileffmpeg libraries
+        exclude "lib/*/libmobileffmpeg*.so"
+        exclude "lib/*/libffmpegkit*.so"
+        // remove all armv7 neon libraries
+        exclude "lib/armeabi-v7a/*_neon.so"
+
+        // remove system libraries
+        exclude "lib/*/libGLESv1_CM.so"
+        exclude "lib/*/libOpenSLES.so"
+        exclude "lib/*/libz.so"
+        exclude "lib/*/liblog.so"
+        exclude "lib/*/libm.so"
+
+        // remove arm64 libraries if testing arm32
+        if(project.properties.abifilters == "arm64-v8a") {
+            println "[idTech4Amm]: Remove arm32 libraries"
+            exclude "lib/armeabi-v7a/**"
+            // only pick arm xunwind library
+            pickFirst "lib/arm64-v8a/libxunwind.so"
+        } else if(project.properties.abifilters == "armeabi-v7a") {
+            println "[idTech4Amm]: Remove arm64 libraries"
+            exclude "lib/arm64-v8a/**"
+            // only pick arm xunwind library
+            pickFirst "lib/armeabi-v7a/libxunwind.so"
+        } else {
+            println "[idTech4Amm]: Remove nothing"
+            // only pick arm xunwind library
+            pickFirst "lib/arm**/libxunwind.so"
+        }
+
+		// keep debug info
+        if(project.properties.debugSymbols == "1") {
+            println "[idTech4Amm]: Keep library debug symbols"
+            doNotStrip "*/armeabi-v7a/*.so"
+            doNotStrip "*/arm64-v8a/*.so"
+        } else {
+            println "[idTech4Amm]: Strip library debug symbols"
+        }
+    }
+}
+
+dependencies {
+    implementation project(':Q3E')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    //implementation 'com.android.support:preference-v7:28.0.0'
+    implementation 'com.android.support:documentfile:28.0.0'
+}

@@ -1,0 +1,105 @@
+﻿Sphere.cpp
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(459): error C3646: 'i': unknown override specifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(459): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(463): error C3646: 'iSqrt': unknown override specifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(463): error C2143: syntax error: missing ',' before '['
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(463): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(464): error C2143: syntax error: missing ')' before ';'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(464): error C2098: unexpected token after data member 'initialized'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(464): error C2059: syntax error: ')'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(508): error C2146: syntax error: missing ';' before identifier 'a'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(508): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(508): error C2039: 'i': is not a member of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(458): note: see declaration of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(511): error C2065: 'initialized': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(514): error C2039: 'i': is not a member of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(458): note: see declaration of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(514): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(514): error C2065: 'iSqrt': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(514): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(514): error C7732: expected an expression before ']'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(544): error C2146: syntax error: missing ';' before identifier 'a'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(544): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(544): error C2039: 'i': is not a member of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(458): note: see declaration of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(547): error C2065: 'initialized': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(550): error C2039: 'i': is not a member of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(458): note: see declaration of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(550): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(550): error C2065: 'iSqrt': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(550): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(550): error C7732: expected an expression before ']'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(582): error C2146: syntax error: missing ';' before identifier 'a'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(582): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(582): error C2039: 'i': is not a member of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(458): note: see declaration of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(585): error C2065: 'initialized': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(588): error C2039: 'i': is not a member of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(458): note: see declaration of 'idMath::_flint'
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(588): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(588): error C2065: 'iSqrt': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(588): error C2065: 'a': undeclared identifier
+D:\dev\com.n0n3m4.diii4a-master\doom3\neo\idlib\math/Math.h(588): error C7732: expected an expression before ']'
+doom3/neo\idlib/Str.h(509): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+doom3/neo\idlib/Str.h(509): error C2143: syntax error: missing ',' before '&'
+doom3/neo\idlib/math/Vector.h(2258): error C3861: 'Mem_Free16': identifier not found
+doom3/neo\idlib/math/Vector.h(2293): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2308): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2327): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2343): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2360): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2379): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2394): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2487): error C3861: 'Mem_Free16': identifier not found
+doom3/neo\idlib/math/Vector.h(2494): error C3861: 'Mem_Alloc16': identifier not found
+doom3/neo\idlib/math/Vector.h(2512): error C3861: 'Mem_Alloc16': identifier not found
+doom3/neo\idlib/math/Vector.h(2524): error C3861: 'Mem_Free16': identifier not found
+doom3/neo\idlib/math/Vector.h(2562): error C3861: 'Mem_Free16': identifier not found
+doom3/neo\idlib/math/Vector.h(2576): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2586): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2596): error C2065: 'idRandom': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2596): error C2146: syntax error: missing ';' before identifier 'rnd'
+doom3/neo\idlib/math/Vector.h(2596): error C3861: 'rnd': identifier not found
+doom3/neo\idlib/math/Vector.h(2601): error C2065: 'rnd': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2609): error C2065: 'idRandom': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2609): error C2146: syntax error: missing ';' before identifier 'rnd'
+doom3/neo\idlib/math/Vector.h(2609): error C3861: 'rnd': identifier not found
+doom3/neo\idlib/math/Vector.h(2615): error C2065: 'rnd': undeclared identifier
+doom3/neo\idlib/math/Vector.h(2622): error C2065: 'SIMDProcessor': undeclared identifier
+doom3/neo\idlib/math/Plane.h(201): error C2679: binary '*=': no operator found which takes a right-hand operand of type 'const idMat3' (or there is no acceptable conversion)
+doom3/neo\idlib/math/Vector.h(850): note: could be 'idVec3 &idVec3::operator *=(const float)'
+doom3/neo\idlib/math/Plane.h(201): note: 'idVec3 &idVec3::operator *=(const float)': cannot convert argument 2 from 'const idMat3' to 'const float'
+doom3/neo\idlib/math/Plane.h(201): note: use of undefined type 'idMat3'
+doom3/neo\idlib/math/Vector.h(44): note: see declaration of 'idMat3'
+doom3/neo\idlib/math/Plane.h(201): note: while trying to match the argument list '(idVec3, const idMat3)'
+doom3/neo\idlib/math/Plane.h(359): error C2678: binary '*': no operator found which takes a left-hand operand of type 'const idVec3' (or there is no acceptable conversion)
+doom3/neo\idlib/math/Vector.h(788): note: could be 'idVec3 idVec3::operator *(const float) const'
+doom3/neo\idlib/math/Plane.h(359): note: 'idVec3 idVec3::operator *(const float) const': cannot convert argument 2 from 'const idMat3' to 'const float'
+doom3/neo\idlib/math/Plane.h(359): note: use of undefined type 'idMat3'
+doom3/neo\idlib/math/Vector.h(44): note: see declaration of 'idMat3'
+doom3/neo\idlib/math/Vector.h(783): note: or       'float idVec3::operator *(const idVec3 &) const'
+doom3/neo\idlib/math/Plane.h(359): note: 'float idVec3::operator *(const idVec3 &) const': cannot convert argument 2 from 'const idMat3' to 'const idVec3 &'
+doom3/neo\idlib/math/Plane.h(359): note: Reason: cannot convert from 'const idMat3' to 'const idVec3'
+doom3/neo\idlib/math/Plane.h(359): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+doom3/neo\idlib/math/Vector.h(2419): note: or       'idVecX operator *(const float,const idVecX)'
+doom3/neo\idlib/math/Plane.h(359): note: 'idVecX operator *(const float,const idVecX)': cannot convert argument 1 from 'const idVec3' to 'const float'
+doom3/neo\idlib/math/Plane.h(359): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+doom3/neo\idlib/math/Vector.h(2010): note: or       'idVec6 operator *(const float,const idVec6)'
+doom3/neo\idlib/math/Plane.h(359): note: 'idVec6 operator *(const float,const idVec6)': cannot convert argument 1 from 'const idVec3' to 'const float'
+doom3/neo\idlib/math/Plane.h(359): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+doom3/neo\idlib/math/Vector.h(1521): note: or       'idVec4 operator *(const float,const idVec4)'
+doom3/neo\idlib/math/Plane.h(359): note: 'idVec4 operator *(const float,const idVec4)': cannot convert argument 1 from 'const idVec3' to 'const float'
+doom3/neo\idlib/math/Plane.h(359): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+doom3/neo\idlib/math/Vector.h(802): note: or       'idVec3 operator *(const float,const idVec3)'
+doom3/neo\idlib/math/Plane.h(359): note: 'idVec3 operator *(const float,const idVec3)': cannot convert argument 1 from 'const idVec3' to 'const float'
+doom3/neo\idlib/math/Plane.h(359): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+doom3/neo\idlib/math/Vector.h(329): note: or       'idVec2 operator *(const float,const idVec2)'
+doom3/neo\idlib/math/Plane.h(359): note: 'idVec2 operator *(const float,const idVec2)': cannot convert argument 1 from 'const idVec3' to 'const float'
+doom3/neo\idlib/math/Plane.h(359): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+doom3/neo\idlib/math/Plane.h(359): note: while trying to match the argument list '(const idVec3, const idMat3)'
+doom3/neo\idlib/math/Plane.h(367): error C2679: binary '*=': no operator found which takes a right-hand operand of type 'const idMat3' (or there is no acceptable conversion)
+doom3/neo\idlib/math/Vector.h(850): note: could be 'idVec3 &idVec3::operator *=(const float)'
+doom3/neo\idlib/math/Plane.h(367): note: 'idVec3 &idVec3::operator *=(const float)': cannot convert argument 2 from 'const idMat3' to 'const float'
+doom3/neo\idlib/math/Plane.h(367): note: use of undefined type 'idMat3'
+doom3/neo\idlib/math/Vector.h(44): note: see declaration of 'idMat3'
+doom3/neo\idlib/math/Plane.h(367): note: while trying to match the argument list '(idVec3, const idMat3)'

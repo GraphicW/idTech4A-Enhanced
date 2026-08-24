@@ -1,0 +1,96 @@
+﻿*** Begin Patch
+*** Update File: doom3/neo/idlib/IDLIB_PCH.h
+@@
+-// Protect idlib headers from stray single-letter macros that break parsing.
+-#pragma push_macro("i")
+-#pragma push_macro("a")
+-#pragma push_macro("S")
+-#pragma push_macro("I")
+-#ifdef i
+-  #undef i
+-#endif
+-#ifdef a
+-  #undef a
+-#endif
+-#ifdef S
+-  #undef S
+-#endif
+-#ifdef I
+-  #undef I
+-#endif
+-
+-// Core idlib math header (relies on <cmath>)
+-#include "math/Math.h"
+-
+-// restore any pushed macros so we don't change other includes
+-#pragma pop_macro("I")
+-#pragma pop_macro("S")
+-#pragma pop_macro("a")
+-#pragma pop_macro("i")
++// Temporary guard: protect Math.h from stray short macros while parsing
++#pragma push_macro("i")
++#pragma push_macro("a")
++#pragma push_macro("r")
++#pragma push_macro("e")
++#pragma push_macro("s")
++#pragma push_macro("t")
++#pragma push_macro("n")
++#pragma push_macro("c")
++#pragma push_macro("m")
++#pragma push_macro("p")
++#pragma push_macro("I")
++#pragma push_macro("S")
++#ifdef i
++  #undef i
++#endif
++#ifdef a
++  #undef a
++#endif
++#ifdef r
++  #undef r
++#endif
++#ifdef e
++  #undef e
++#endif
++#ifdef s
++  #undef s
++#endif
++#ifdef t
++  #undef t
++#endif
++#ifdef n
++  #undef n
++#endif
++#ifdef c
++  #undef c
++#endif
++#ifdef m
++  #undef m
++#endif
++#ifdef p
++  #undef p
++#endif
++#ifdef I
++  #undef I
++#endif
++#ifdef S
++  #undef S
++#endif
++
++// Core idlib math header (relies on <cmath>)
++#include "math/Math.h"
++
++// restore any pushed macros so we don't change other includes
++#pragma pop_macro("S")
++#pragma pop_macro("I")
++#pragma pop_macro("p")
++#pragma pop_macro("m")
++#pragma pop_macro("c")
++#pragma pop_macro("n")
++#pragma pop_macro("t")
++#pragma pop_macro("s")
++#pragma pop_macro("e")
++#pragma pop_macro("r")
++#pragma pop_macro("a")
++#pragma pop_macro("i")
+*** End Patch

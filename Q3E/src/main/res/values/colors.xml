@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="toolbar_key_text_released">#FF313131</color>
+    <color name="toolbar_key_bg_released">#FFE4E7E9</color>
+    <color name="toolbar_key_text_pressed">#FFFFFFFF</color>
+    <color name="toolbar_key_bg_pressed">#FFD4D8DA</color>
+    <color name="toolbar_background">#FFEFF3FA</color>
+
+    <color name="keyboard_background">#FFEBEFF2</color>
+
+    <color name="keyboard_text_released">#FF36474F</color>
+    <color name="keyboard_text_pressed">#FF36474F</color>
+    <color name="keyboard_bg_released">#FFEBEFF2</color>
+    <color name="keyboard_bg_pressed">#FFDBE1E1</color>
+
+    <color name="keyboard_enter_text_released">#FFFFFFFF</color>
+    <color name="keyboard_enter_text_pressed">#FFFFFFFF</color>
+    <color name="keyboard_enter_bg_released">#FF4CB6AC</color>
+    <color name="keyboard_enter_bg_pressed">#FF4CB6AC</color>
+
+    <color name="keyboard_secondary_text_released">#FF808B8F</color>
+    <color name="keyboard_secondary_text_pressed">#FF808B8F</color>
+    <color name="keyboard_secondary_bg_released">#FFEBEFF2</color>
+    <color name="keyboard_secondary_bg_pressed">#FFDBE1E1</color>
+
+</resources>

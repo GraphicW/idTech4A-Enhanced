@@ -1,0 +1,294 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!--
+    <item android:id="@+id/menu_settings"
+        android:title="@string/menu_settings"
+	android:orderInCategory="100" />
+    -->
+
+    <item
+        android:id="@+id/main_menu_game"
+        android:title="@string/game"
+        android:showAsAction="always">
+        <menu>
+            <!-- KARIN_NEW_GAME_BOOKMARK: add game to menu -->
+            <!-- KARIN_DISABLE_GAME_BOOKMARK: remove game from menu -->
+            <group android:id="@+id/menu_idtech4">
+                <item
+                    android:id="@+id/main_menu_game_doom3"
+                    android:title="@string/doom_3"
+                    android:icon="@drawable/d3_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_quake4"
+                    android:title="@string/quake_4"
+                    android:icon="@drawable/q4_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_prey"
+                    android:title="@string/prey_2006"
+                    android:icon="@drawable/prey_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_etqw"
+                    android:title="@string/etqw"
+                    android:icon="@drawable/etqw_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_doom3bfg"
+                    android:title="@string/doom_3_bfg"
+                    android:icon="@drawable/d3bfg_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_tdm"
+                    android:title="@string/tdm"
+                    android:icon="@drawable/tdm_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_skindeep"
+                    android:title="@string/skin_deep"
+                    android:icon="@drawable/skindeep_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_qc"
+                    android:title="@string/qc"
+                    android:icon="@drawable/empty_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_icarus"
+                    android:title="@string/icarus"
+                    android:icon="@drawable/empty_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+
+            <group android:id="@+id/menu_idtech3">
+                <item
+                    android:id="@+id/main_menu_game_quake3"
+                    android:title="@string/quake_3"
+                    android:icon="@drawable/q3_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_rtcw"
+                    android:title="@string/rtcw"
+                    android:icon="@drawable/rtcw_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_etw"
+                    android:title="@string/etw"
+                    android:icon="@drawable/etw_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_ja"
+                    android:title="@string/openja"
+                    android:icon="@drawable/ja_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_jo"
+                    android:title="@string/openjo"
+                    android:icon="@drawable/jo_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_mohaa"
+                    android:title="@string/openmohaa"
+                    android:icon="@drawable/mohaa_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_urt"
+                    android:title="@string/urbanterror"
+                    android:icon="@drawable/urbanterror_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_realrtcw"
+                    android:title="@string/realrtcw"
+                    android:icon="@drawable/realrtcw_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+
+            <group android:id="@+id/menu_idtech2">
+                <item
+                    android:id="@+id/main_menu_game_quake2"
+                    android:title="@string/quake_2"
+                    android:icon="@drawable/q2_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_quake1"
+                    android:title="@string/quake_1"
+                    android:icon="@drawable/q1_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+
+            <group android:id="@+id/menu_idtech1">
+                <item
+                    android:id="@+id/main_menu_game_doom"
+                    android:title="@string/doom"
+                    android:icon="@drawable/uzdoom_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+
+            <group android:id="@+id/menu_idtech0">
+                <item
+                    android:id="@+id/main_menu_game_wolf3d"
+                    android:title="@string/wolf3d"
+                    android:icon="@drawable/wolf3d_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+
+            <group android:id="@+id/menu_idtech_based">
+                <item
+                    android:id="@+id/main_menu_game_fteqw"
+                    android:title="@string/fteqw"
+                    android:icon="@drawable/fteqw_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+
+            <group android:id="@+id/menu_source_engine">
+                <item
+                    android:id="@+id/main_menu_game_xash3d"
+                    android:title="@string/xash3d"
+                    android:icon="@drawable/xash3d_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_source"
+                    android:title="@string/sourceengine"
+                    android:icon="@drawable/source_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+
+            <group android:id="@+id/menu_other_engine">
+                <item
+                    android:id="@+id/main_menu_game_samtfe"
+                    android:title="@string/samtfe"
+                    android:icon="@drawable/samtfe_icon"
+                    android:showAsAction="never|withText"/>
+                <item
+                    android:id="@+id/main_menu_game_samtse"
+                    android:title="@string/samtse"
+                    android:icon="@drawable/samtse_icon"
+                    android:showAsAction="never|withText"/>
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/main_menu_change_game"
+        android:title="@string/change_game"
+        android:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/main_menu_settings"
+        android:title="@string/settings"
+        android:showAsAction="never"/>
+    
+    <item
+		android:id="@+id/main_menu_changes"
+        android:title="@string/changes"
+        android:showAsAction="never"/>
+    <item
+		android:id="@+id/main_menu_source"
+        android:title="@string/about"
+        android:showAsAction="never"/>
+    <item
+		android:id="@+id/main_menu_help"
+        android:title="@string/help"
+        android:showAsAction="never"/>
+
+    <item
+        android:id="@+id/main_menu_preferences"
+        android:title="@string/preference"
+        android:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/main_menu_save_settings"
+                android:title="@string/save_launcher_settings"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_backup_settings"
+                android:title="@string/backup_settings"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_restore_settings"
+                android:title="@string/restore_settings"
+                android:showAsAction="never"/>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/main_menu_option_menu"
+        android:title="@string/option"
+        android:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/main_menu_extract_resource"
+                android:title="@string/extract_resource"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_advance"
+                android:title="@string/advance"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_check_for_update"
+                android:title="@string/check_for_update"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_shortcut"
+                android:title="@string/shortcut"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_download_testing"
+                android:title="@string/download_testing"
+                android:showAsAction="never"/>
+        </menu>
+    </item>
+    
+    <item
+        android:id="@+id/main_menu_other_menu"
+        android:title="@string/other"
+        android:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/main_menu_cvar_list"
+                android:title="@string/special_cvar_list"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_runtime_log"
+                android:title="@string/last_runtime_log"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_translators"
+                android:title="@string/translators"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_support_developer"
+                android:title="@string/support_the_developer"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_debug"
+                android:title="@string/debug"
+                android:showAsAction="never"/>
+        </menu>
+    </item>
+    
+    <item
+        android:id="@+id/main_menu_dev_menu"
+        android:title="Dev"
+        android:visible="false"
+        android:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/main_menu_show_preference"
+                android:title="Show preference"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_debug_text_history"
+                android:title="Debug text history"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_gen_exception"
+                android:title="Throw exception"
+                android:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu_test"
+                android:title="TEST"
+                android:showAsAction="never"/>
+        </menu>
+    </item>
+</menu>

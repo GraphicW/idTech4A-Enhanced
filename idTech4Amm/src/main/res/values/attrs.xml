@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+    
+<resources>
+    <declare-styleable name="SeekBarDialogPreference">
+        <attr name="min" format="integer"/>
+        <attr name="max" format="integer"/>
+        <attr name="suffix" format="string"/>
+        <attr name="editable" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="Divider">
+        <attr name="label" format="string"/>
+        <attr name="lineColor" format="color"/>
+        <attr name="typeface" format="string"/>
+        <attr name="textStyle" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SelectDialogPreference">
+        <attr name="entries" format="reference" />
+        <attr name="entryValues" format="reference" />
+        <attr name="positiveManually" format="boolean"/>
+        <attr name="resetDefault" format="boolean"/>
+    </declare-styleable>
+</resources>

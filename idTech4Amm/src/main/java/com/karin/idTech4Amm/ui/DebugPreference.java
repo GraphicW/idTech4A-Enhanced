@@ -1,0 +1,219 @@
+package com.karin.idTech4Amm.ui;
+import android.content.Intent;
+import android.os.Process;
+import android.preference.PreferenceFragment;
+import android.os.Bundle;
+import android.preference.PreferenceScreen;
+import android.preference.Preference;
+import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.widget.Toast;
+
+import com.karin.idTech4Amm.EventTestActivity;
+import com.karin.idTech4Amm.LogcatActivity;
+import com.karin.idTech4Amm.R;
+import com.karin.idTech4Amm.lib.ContextUtility;
+import com.karin.idTech4Amm.sys.Constants;
+import com.n0n3m4.q3e.Q3EContextUtils;
+import com.n0n3m4.q3e.Q3EGlobals;
+import com.n0n3m4.q3e.Q3ELang;
+import com.n0n3m4.q3e.Q3EPreference;
+import com.n0n3m4.q3e.Q3EUtils;
+import com.n0n3m4.q3e.karin.KBacktraceHandler;
+import com.n0n3m4.q3e.karin.KLog;
+import com.n0n3m4.q3e.karin.KStr;
+import com.n0n3m4.q3e.karin.KUncaughtExceptionHandler;
+
+/**
+ * Debug preference fragment
+ */
+public class DebugPreference extends PreferenceFragment implements Preference.OnPreferenceChangeListener
+{
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.debug_preference);
+        findPreference(Q3EPreference.pref_harm_debug_text_x).setOnPreferenceChangeListener(this);
+        findPreference(Q3EPreference.pref_harm_debug_text_y).setOnPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference)
+    {
+        String key = preference.getKey();
+        Context context = ContextUtility.GetContext(this);
+        if("last_dalvik_crash_info".equals(key))
+        {
+            OpenCrashInfo();
+        }
+        else if("get_pid".equals(key))
+        {
+            GetPID();
+        }
+        else if("open_documentsui".equals(key))
+        {
+            OpenDocumentsUI();
+        }
+        else if("open_logcat".equals(key))
+        {
+            OpenLogcat();
+        }
+        else if("show_preference".equals(key))
+        {
+            ShowPreference();
+        }
+        else if("last_backtrace".equals(key))
+        {
+            OpenBacktraceInfo();
+        }
+        else if("clean_dalvik_crash_files".equals(key))
+        {
+            String path = Q3EContextUtils.GetAppStoragePath(context, "/" + Q3EGlobals.FOLDER_CRASH_LOG);
+            CleanFolder(path, Q3ELang.tr(context, R.string.crash));
+        }
+        else if("clean_backtrace_crash_files".equals(key))
+        {
+            String path = Q3EContextUtils.GetAppStoragePath(context, "/" + Q3EGlobals.FOLDER_BACKTRACE_LOG);
+            CleanFolder(path, Q3ELang.tr(context, R.string.backtrace));
+        }
+        else if("test_event".equals(key))
+        {
+            OpenEventTesting();
+        }
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
+    private void OpenCrashInfo()
+    {
+        Context activity = ContextUtility.GetContext(this);
+        String text = KUncaughtExceptionHandler.GetDumpExceptionContent();
+        AlertDialog.Builder builder = ContextUtility.CreateMessageDialogBuilder(activity, Q3ELang.tr(activity, R.string.last_crash_info), text != null ? text : Q3ELang.tr(activity, R.string.none));
+        if(text != null)
+        {
+            builder.setNeutralButton(R.string.clear, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    KUncaughtExceptionHandler.ClearDumpExceptionContent();
+                    dialog.dismiss();
+                }
+            });
+            if(Constants.IsDebug())
+            {
+                builder.setNegativeButton("Trigger", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        throw new RuntimeException("Manuel trigger exception for testing");
+                    }
+                });
+            }
+        }
+        builder.create().show();
+    }
+
+    private void GetPID()
+    {
+        Context activity = ContextUtility.GetContext(this);
+        final String PID = "" + Process.myPid();
+        Toast.makeText(activity, getString(R.string.application_pid) + PID, Toast.LENGTH_LONG).show();
+        Q3EContextUtils.CopyToClipboard(activity, PID);
+    }
+
+    private void OpenDocumentsUI()
+    {
+        Context activity = ContextUtility.GetContext(this);
+        try
+        {
+            ContextUtility.OpenDocumentsUI(activity);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void OpenLogcat()
+    {
+        Context activity = ContextUtility.GetContext(this);
+        activity.startActivity(new Intent(activity, LogcatActivity.class));
+    }
+
+    private void OpenEventTesting()
+    {
+        Context activity = ContextUtility.GetContext(this);
+        activity.startActivity(new Intent(activity, EventTestActivity.class));
+    }
+
+    private void ShowPreference()
+    {
+        Context activity = ContextUtility.GetContext(this);
+        new SharedPreferenceViewer(activity).run();
+    }
+
+    private void CleanFolder(String path, String type)
+    {
+        Context context = ContextUtility.GetContext(this);
+        ContextUtility.Confirm(context, Q3ELang.tr(context, R.string.warning), Q3ELang.tr(context, R.string.are_you_sure_clean_all_log_files, type), new Runnable() {
+            @Override
+            public void run()
+            {
+                KLog.I("Remove folder: " + path);
+                Q3EUtils.rmdir_r(path);
+                Toast.makeText(context, R.string.success, Toast.LENGTH_SHORT).show();
+            }
+        }, null, null, null);
+    }
+
+    private void OpenBacktraceInfo()
+    {
+        Context activity = ContextUtility.GetContext(this);
+        KBacktraceHandler.HandleBacktrace(activity);
+        String text = KBacktraceHandler.GetDumpExceptionContent();
+        AlertDialog.Builder builder = ContextUtility.CreateMessageDialogBuilder(activity, Q3ELang.tr(activity, R.string.last_backtrace_info), text != null ? text : Q3ELang.tr(activity, R.string.none));
+        if(text != null)
+        {
+            builder.setNegativeButton(R.string.clear, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    KBacktraceHandler.ClearDumpBacktraceContent();
+                    dialog.dismiss();
+                }
+            });
+            builder.setNeutralButton(R.string.copy, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    Q3EContextUtils.CopyToClipboard(activity, text);
+                    Toast.makeText(activity, R.string.success, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            });
+        }
+        builder.create().show();
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue)
+    {
+        String key = preference.getKey();
+        switch (key)
+        {
+            case Q3EPreference.pref_harm_debug_text_x:
+            {
+                return Q3EUtils.parseInt_s((String) newValue) >= 0;
+            }
+            case Q3EPreference.pref_harm_debug_text_y:
+            {
+                return Q3EUtils.parseInt_s((String) newValue) >= 0;
+            }
+            default:
+                return false;
+        }
+    }
+}

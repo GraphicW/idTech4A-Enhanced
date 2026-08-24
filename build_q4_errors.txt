@@ -1,0 +1,7 @@
+﻿cmake : Error: D:/dev/com.n0n3m4.diii4a-master/build is not a directory
+At line:1 char:1
++ cmake --build build --config Debug --target Doom3 2>&1 | Out-File bui ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: D:/dev/c...not a directory:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

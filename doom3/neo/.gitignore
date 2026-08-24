@@ -1,0 +1,10 @@
+cmake-*
+.idea
+
+# VSMC
+*.dir
+*.vcxproj*
+cmake_install.cmake
+build
+Release
+/Debug

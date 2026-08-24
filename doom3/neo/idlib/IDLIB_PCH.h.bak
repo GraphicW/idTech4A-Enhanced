@@ -1,0 +1,165 @@
+﻿// doom3/neo/idlib/IDLIB_PCH.h
+// Minimal, safe precompiled header for idlib.
+// Purpose: provide a small, stable baseline (ID_INLINE, math, common std headers)
+// and protect idlib headers from stray single-letter macro collisions.
+
+#ifndef IDLIB_PCH_H
+#define IDLIB_PCH_H
+
+// Standard small C/C++ headers used by many idlib headers
+#include <cstdint>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
+#include <cmath>
+#include <cfloat>
+
+// ID_INLINE definition (portable)
+#ifndef ID_INLINE
+#if defined(_MSC_VER)
+#define ID_INLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+#define ID_INLINE inline __attribute__((always_inline))
+#else
+#define ID_INLINE inline
+#endif
+#endif
+
+// Protect idlib headers from stray single-letter macros that break parsing.
+// Use push/pop so we don't permanently change other includes.
+#pragma push_macro("i")
+#pragma push_macro("a")
+#pragma push_macro("S")
+#pragma push_macro("I")
+#ifdef i
+#undef i
+#endif
+#ifdef a
+#undef a
+#endif
+#ifdef S
+#undef S
+#endif
+#ifdef I
+#undef I
+#endif
+
+// Core idlib math header (relies on <cmath>)
+// Temporary guard: protect Math.h from stray short macros while parsing
+#pragma push_macro("i")
+#pragma push_macro("a")
+#pragma push_macro("r")
+#pragma push_macro("e")
+#pragma push_macro("s")
+#pragma push_macro("t")
+#pragma push_macro("n")
+#pragma push_macro("c")
+#pragma push_macro("m")
+#pragma push_macro("p")
+#pragma push_macro("I")
+#pragma push_macro("S")
+#ifdef i
+  #undef i
+#endif
+#ifdef a
+  #undef a
+#endif
+#ifdef r
+  #undef r
+#endif
+#ifdef e
+  #undef e
+#endif
+#ifdef s
+  #undef s
+#endif
+#ifdef t
+  #undef t
+#endif
+#ifdef n
+  #undef n
+#endif
+#ifdef c
+  #undef c
+#endif
+#ifdef m
+  #undef m
+#endif
+#ifdef p
+  #undef p
+#endif
+#ifdef I
+  #undef I
+#endif
+#ifdef S
+  #undef S
+#endif
+
+#pragma push_macro("i")
+#pragma push_macro("a")
+#ifdef i
+  #undef i
+#endif
+#ifdef a
+  #undef a
+#endif
+
+#pragma push_macro("i")
+#pragma push_macro("a")
+#ifdef i
+  #undef i
+#endif
+#ifdef a
+  #undef a
+#endif
+
+#include "math/Math.h"
+
+#pragma pop_macro("a")
+#pragma pop_macro("i")
+
+#pragma pop_macro("a")
+#pragma pop_macro("i")
+
+#pragma pop_macro("S")
+#pragma pop_macro("I")
+#pragma pop_macro("p")
+#pragma pop_macro("m")
+#pragma pop_macro("c")
+#pragma pop_macro("n")
+#pragma pop_macro("t")
+#pragma pop_macro("s")
+#pragma pop_macro("e")
+#pragma pop_macro("r")
+#pragma pop_macro("a")
+#pragma pop_macro("i")
+
+// restore any pushed macros so we don't change other includes
+#pragma pop_macro("I")
+#pragma pop_macro("S")
+#pragma pop_macro("a")
+#pragma pop_macro("i")
+
+// Lightweight forward declarations to avoid pulling heavy headers
+class idStr;
+template <typename T> class idList;
+class idPlane;
+
+// Small idStr helper macros (map to std functions)
+#ifndef use_idStr_vsnPrintf
+#define use_idStr_vsnPrintf(buf, size, fmt, ap) vsnprintf((buf), (size), (fmt), (ap))
+#endif
+
+#ifndef use_idStr_snPrintf
+#define use_idStr_snPrintf(buf, size, fmt, ...) snprintf((buf), (size), (fmt), __VA_ARGS__)
+#endif
+
+#ifndef use_idStr_Cmpn
+#define use_idStr_Cmpn(a, b, n) strncmp((a), (b), (n))
+#endif
+
+#endif // IDLIB_PCH_H
+
+
+

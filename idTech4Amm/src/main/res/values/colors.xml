@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- KARIN_NEW_GAME_BOOKMARK: add game theme color -->
+    <color name="theme_doom3_main_color">#FF212121</color>
+    <color name="theme_quake4_main_color">#FF16492A</color>
+    <color name="theme_prey_main_color">#FF04ACFF</color>
+    <color name="theme_quake1_main_color">#FFCC7C3C</color>
+    <color name="theme_quake2_main_color">#FF363636</color>
+    <color name="theme_quake3_main_color">#FF614D44</color>
+    <color name="theme_rtcw_main_color">#FF330000</color>
+    <color name="theme_tdm_main_color">#FF763F20</color>
+    <color name="theme_d3bfg_main_color">#FFB54C13</color>
+    <color name="theme_gzdoom_main_color">#FF0C377A</color>
+    <color name="theme_uzdoom_main_color">#FF237887</color>
+    <color name="theme_etw_main_color">#FFA7605A</color>
+    <color name="theme_realrtcw_main_color">#FFF20000</color>
+    <color name="theme_fteqw_main_color">#FF8A74EB</color>
+    <color name="theme_ja_main_color">#FF8ED4FF</color>
+    <color name="theme_jo_main_color">#FF8EABFF</color>
+    <color name="theme_samtfe_main_color">#FFFFCC00</color>
+    <color name="theme_samtse_main_color">#FFCCCC00</color>
+    <color name="theme_xash3d_main_color">#FFF97C79</color>
+    <color name="theme_source_main_color">#FFFCDFB2</color>
+    <color name="theme_urt_main_color">#FFC5C6C8</color>
+    <color name="theme_mohaa_main_color">#FFEFBA85</color>
+    <color name="theme_wolf3d_main_color">#FF0000B2</color>
+    <color name="theme_skindeep_main_color">#FFC700FD</color>
+    <color name="theme_qc_main_color">#FFDCD7C3</color>
+    <color name="theme_icarus_main_color">#FF02BDFD</color>
+    <color name="theme_etqw_main_color">#FFD8D1C7</color>
+
+    <color name="launcher_divider_color">#FFCCCCCC</color>
+    <color name="launcher_box_color">#FFBBBBBB</color>
+    <color name="pie_color">#FF4585E1</color>
+</resources>

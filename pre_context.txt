@@ -1,0 +1,241 @@
+﻿ void __cdecl _set_controlfp(
+      unsigned int _NewValue,
+      unsigned int _Mask
+    );
+
+
+ errno_t __cdecl _controlfp_s(
+      unsigned int* _CurrentState,
+           unsigned int  _NewValue,
+           unsigned int  _Mask
+    );
+
+
+ unsigned int __cdecl _statusfp(void);
+
+
+ void __cdecl _fpreset(void);
+
+
+
+    
+     void __cdecl _statusfp2(
+          unsigned int* _X86Status,
+          unsigned int* _SSE2Status
+        );
+
+#line 272 "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\float.h"
+
+
+
+
+
+ unsigned int __cdecl _control87(
+      unsigned int _NewValue,
+      unsigned int _Mask
+    );
+
+
+    
+     int __cdecl __control87_2(
+               unsigned int  _NewValue,
+               unsigned int  _Mask,
+          unsigned int* _X86ControlWord,
+          unsigned int* _Sse2ControlWord
+        );
+#line 291 "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\float.h"
+
+
+ 
+ int* __cdecl __fpecode(void);
+
+
+
+ 
+ int __cdecl __fpe_flt_rounds(void);
+
+
+
+
+
+
+
+
+
+
+
+
+   double __cdecl _copysign(  double _Number,   double _Sign);
+   double __cdecl _chgsign(  double _X);
+   double __cdecl _scalb(  double _X,   long _Y);
+   double __cdecl _logb(  double _X);
+   double __cdecl _nextafter(  double _X,   double _Y);
+   int    __cdecl _finite(  double _X);
+   int    __cdecl _isnan(  double _X);
+   int    __cdecl _fpclass(  double _X);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+
+    
+     void __cdecl fpreset(void);
+
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+#line 403 "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\float.h"
+
+
+
+} __pragma(pack(pop))
+
+#pragma warning(pop) 
+#line 410 "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\float.h"
+#line 11 "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\include\\cfloat"
+#line 12 "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\include\\cfloat"
+#line 17 "doom3\\neo\\idlib\\IDLIB_PCH.h"
+
+
+
+
+
+
+
+
+
+#line 27 "doom3\\neo\\idlib\\IDLIB_PCH.h"
+#line 28 "doom3\\neo\\idlib\\IDLIB_PCH.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 1 "D:\\dev\\com.n0n3m4.diii4a-master\\doom3\\neo\\idlib\\math/Math.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
