@@ -1,4 +1,5 @@
 #include "RenderThread.h"
+#include "../CinematicWorker.h"
 
 #ifdef _SPLASHDAMAGE //karin: render threading
 #include "renderer/RenderProgramManager.h"
@@ -258,6 +259,8 @@ idImage * idRenderThread::GetNextPurgeImage( void )
 
 void idRenderThread::HandlePendingImage(void)
 {
+    cinematicWorker.Pump();
+
     int queueStart = Sys_Milliseconds();
     int imageCount = 0;
 

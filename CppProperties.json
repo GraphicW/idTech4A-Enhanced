@@ -1,0 +1,16 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "build-win\\doom3\\neo\\RelWithDebInfo\\Doom3.exe",
+      "projectTarget": "",
+      "name": "Doom 3 - Native Debug",
+      "program": "E:\\SteamLibrary\\steamapps\\common\\Doom 3\\Doom3.exe",
+      "currentDir": "E:\\SteamLibrary\\steamapps\\common\\Doom 3",
+      "args": [],
+      "debugType": "native"
+    }
+  ]
+}

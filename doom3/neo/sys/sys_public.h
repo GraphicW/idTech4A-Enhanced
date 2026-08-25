@@ -785,14 +785,14 @@ void				Sys_DestroyThread(xthreadInfo &info);   // sets threadHandle back to 0
 // if index != NULL, set the index in g_threads array (use -1 for "main" thread)
 const char 		*Sys_GetThreadName(int *index = 0);
 
-const int MAX_CRITICAL_SECTIONS		= 4
-//#ifdef _HUMANHEAD //karin: for subtitle in snd system
-//+ 1
-//#endif
-#if defined(_MULTITHREAD) && defined(_IMGUI) //karin: for imgui in multithreading
+const int MAX_CRITICAL_SECTIONS = 4
+#ifdef _MULTITHREAD
 + 1
 #endif
-#if 1 //def _SDL
+#if defined(_MULTITHREAD) && defined(_IMGUI)
++1
+#endif
+#if 1
 + 1
 #endif
 ;
@@ -806,6 +806,10 @@ enum {
 	CRITICAL_SECTION_ONE,
 	CRITICAL_SECTION_TWO,
 	CRITICAL_SECTION_THREE
+
+#ifdef _MULTITHREAD
+	, CRITICAL_SECTION_CINEMATIC
+#endif
 //#ifdef _HUMANHEAD //karin: for subtitle in snd system
 //    , CRITICAL_SECTION_SUBTITLE
 //#endif

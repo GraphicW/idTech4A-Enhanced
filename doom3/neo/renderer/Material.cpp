@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "tr_local.h"
+#include "CinematicManager.h"
 
 #if 0
 #define NS_DEBUG(x) x
@@ -208,22 +209,33 @@ void idMaterial::FreeData()
 {
 	int i;
 
-	if (stages) {
-		// delete any idCinematic textures
-		for (i = 0; i < numStages; i++) {
-			if (stages[i].texture.cinematic != NULL) {
-#ifdef _MULTITHREAD //karin: set image's cinematic to null if with OpenAL, image isn't deleted pointer by setting idImage::imageReferencePtr to NULL
-				if(multithreadActive)
+	if (stages)
+	{
+		// Delete any idCinematic textures.
+		for (i = 0; i < numStages; i++)
+		{
+			if (stages[i].texture.cinematic != NULL)
+			{
+#ifdef _MULTITHREAD
+				if (multithreadActive)
 				{
-					if(stages[i].texture.image)
+					cinematicManager.Cancel(
+						stages[i].texture.cinematic
+					);
+
+					if (stages[i].texture.image)
+					{
 						stages[i].texture.image->cinematic = NULL;
+					}
 				}
 #endif
+
 				delete stages[i].texture.cinematic;
 				stages[i].texture.cinematic = NULL;
 			}
 
-			if (stages[i].newStage != NULL) {
+			if (stages[i].newStage != NULL)
+			{
 				Mem_Free(stages[i].newStage);
 				stages[i].newStage = NULL;
 			}
@@ -4293,18 +4305,29 @@ void idMaterial::UpdateCinematic(int time) const
 idMaterial::CloseCinematic
 =============
 */
+
 void idMaterial::CloseCinematic(void) const
 {
-	for (int i = 0; i < numStages; i++) {
-		if (stages[i].texture.cinematic) {
-			stages[i].texture.cinematic->Close();
-#ifdef _MULTITHREAD //karin: set image's cinematic to null if with OpenAL, image isn't deleted pointer by setting idImage::imageReferencePtr to NULL
-			if(multithreadActive)
+	for (int i = 0; i < numStages; i++)
+	{
+		if (stages[i].texture.cinematic)
+		{
+#ifdef _MULTITHREAD
+			if (multithreadActive)
 			{
-				if(stages[i].texture.image)
+				cinematicManager.Cancel(
+					stages[i].texture.cinematic
+				);
+
+				if (stages[i].texture.image)
+				{
 					stages[i].texture.image->cinematic = NULL;
+				}
 			}
 #endif
+
+			stages[i].texture.cinematic->Close();
+
 			delete stages[i].texture.cinematic;
 			stages[i].texture.cinematic = NULL;
 		}
