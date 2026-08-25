@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "tr_local.h"
+#include "CinematicManager.h"
 
 /*
 
@@ -485,6 +486,24 @@ Handles generating a cinematic frame if needed
 void RB_BindVariableStageImage(const textureStage_t *texture, const float *shaderRegisters)
 {
 	if (texture->cinematic) {
+		if (texture->image && backEnd.viewDef)
+		{
+			int requestedTime =
+				(int)(
+					1000 *
+					(
+						backEnd.viewDef->floatTime +
+						backEnd.viewDef->renderView.shaderParms[11]
+						)
+					);
+
+			cinematicManager.Register(
+				texture->cinematic,
+				texture->image,
+				requestedTime,
+				tr.frameCount
+			);
+		}
 		cinData_t	cin;
 
 		if (r_skipDynamicTextures.GetBool()) {
