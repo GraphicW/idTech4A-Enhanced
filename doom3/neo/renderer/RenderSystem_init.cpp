@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "tr_local.h"
+#include "CinematicManager.h"
 
 #ifdef _SPLASHDAMAGE
 #include "renderer/RenderProgramManager.h"
@@ -2557,11 +2558,12 @@ void idRenderSystemLocal::Shutdown(void)
 
 	common->SetRefreshOnPrint( false ); // without a renderer there's nothing to refresh
 #ifdef _MULTITHREAD
-	if(multithreadActive)
+	if (multithreadActive)
 	{
 		renderThread->BackendThreadShutdown();
-		//common->SetRefreshOnPrint( false ); // without a renderer there's nothing to refresh
 	}
+
+	cinematicManager.Clear();
 #endif
 
 	R_DoneFreeType();
