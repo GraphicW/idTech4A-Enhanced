@@ -357,6 +357,13 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 		modelSurface_t* existingSurface =
 			model->FindMutableSurfaceWithId(active->surfaceId);
 
+		if (existingSurface != NULL) {
+			gameLocal.Warning(
+				"SmokeParticles: existing surface %d survived InitEmpty",
+				active->surfaceId
+			);
+		}
+
 		if (!stage->material) {
 			continue;
 		}
@@ -459,7 +466,7 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 			modelSurface_t	surf;
 			surf.geometry = tri;
 			surf.shader = stage->material;
-			surf.id = 0;
+			surf.id = active->surfaceId;
 
 			model->AddSurface(surf);
 		}
