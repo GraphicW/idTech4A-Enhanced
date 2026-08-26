@@ -354,6 +354,8 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 
 		activeSmokeStage_t *active = &activeStages[activeStageNum];
 		const idParticleStage *stage = active->stage;
+		modelSurface_t* existingSurface =
+			model->FindMutableSurfaceWithId(active->surfaceId);
 
 		if (!stage->material) {
 			continue;
