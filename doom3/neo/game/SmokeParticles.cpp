@@ -274,11 +274,15 @@ bool idSmokeParticles::EmitSmoke
 
 		if (i == activeStages.Num()) {
 			// add a new one
-			activeSmokeStage_t	newActive;
+			activeSmokeStage_t newActive;
 
 			newActive.smokes = NULL;
 			newActive.stage = stage;
 			newActive.surfaceId = nextSurfaceId++;
+
+			newActive.allocatedVerts = 0;
+			newActive.allocatedIndexes = 0;
+
 			i = activeStages.Append(newActive);
 			active = &activeStages[i];
 		}
@@ -329,8 +333,10 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 		return false;
 	}
 
-	// FIXME: re-use model surfaces
-	renderEntity->hModel->InitEmpty(smokeParticle_SnapshotName);
+	idRenderModel* model = renderEntity->hModel;
+
+	// FIXED: we should be able to just call InitEmpty() and then AddSurface() for each active stage, but the model system doesn't handle that correctly yet
+	model->InitEmpty(smokeParticle_SnapshotName);
 
 	currentParticleTime = renderView->time;
 
@@ -357,7 +363,12 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 		}
 
 		int	quads = count * stage->NumQuadsPerParticle();
-		srfTriangles_t *tri = renderEntity->hModel->AllocSurfaceTriangles(quads * 4, quads * 6);
+		srfTriangles_t* tri =
+			model->AllocSurfaceTriangles(
+				quads * 4,
+				quads * 6
+			);
+
 		tri->numIndexes = quads * 6;
 		tri->numVerts = quads * 4;
 
@@ -412,7 +423,7 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 		if (tri->numVerts == 0) {
 
 			// they were all removed
-			renderEntity->hModel->FreeSurfaceTriangles(tri);
+			model->FreeSurfaceTriangles(tri);
 
 			if (!active->smokes) {
 				// remove this from the activeStages list
@@ -440,7 +451,7 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 			surf.shader = stage->material;
 			surf.id = 0;
 
-			renderEntity->hModel->AddSurface(surf);
+			model->AddSurface(surf);
 		}
 	}
 
