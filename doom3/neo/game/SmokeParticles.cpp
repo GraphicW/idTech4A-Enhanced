@@ -335,7 +335,11 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 
 	idRenderModel* model = renderEntity->hModel;
 
-	// FIXED: we should be able to just call InitEmpty() and then AddSurface() for each active stage, but the model system doesn't handle that correctly yet
+	// Future persistent-surface path will reuse geometry.
+	// Clear cached vertex data before geometry updates.
+	model->FreeVertexCache();
+
+	// FIXME: we should be able to just clear the surfaces, but that is not implemented yet
 	model->InitEmpty(smokeParticle_SnapshotName);
 
 	currentParticleTime = renderView->time;
@@ -362,15 +366,19 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 			count++;
 		}
 
-		int	quads = count * stage->NumQuadsPerParticle();
+		const int quads = count * stage->NumQuadsPerParticle();
+
+		const int requiredVerts = quads * 4;
+		const int requiredIndexes = quads * 6;
+
 		srfTriangles_t* tri =
 			model->AllocSurfaceTriangles(
-				quads * 4,
-				quads * 6
+				requiredVerts,
+				requiredIndexes
 			);
 
-		tri->numIndexes = quads * 6;
-		tri->numVerts = quads * 4;
+		tri->numIndexes = requiredIndexes;
+		tri->numVerts = requiredVerts;
 
 		// just always draw the particles
 		tri->bounds[0][0] =
@@ -416,7 +424,7 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 			last = smoke;
 		}
 
-		if (tri->numVerts > quads * 4) {
+		if (tri->numVerts > requiredVerts) {
 			gameLocal.Error("idSmokeParticles::UpdateRenderEntity: miscounted verts");
 		}
 
