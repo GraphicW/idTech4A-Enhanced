@@ -533,13 +533,6 @@ void idSoundEmitterLocal::CheckForCompletion(int current44kHzTime)
 
 			// see if this channel has completed
 			if (!(chan->parms.soundShaderFlags & SSF_LOOPING)) {
-#ifdef _OPENAL
-				ALint state = AL_PLAYING;
-				if (idSoundSystemLocal::useOpenAL && alIsSource(chan->openalSource)) {
-					alGetSourcei(chan->openalSource, AL_SOURCE_STATE, &state);
-				}
-#endif
-
 				idSlowChannel slow = GetSlowChannel(chan);
 
 				if (soundWorld->slowmoActive && slow.IsActive()) {
@@ -553,11 +546,12 @@ void idSoundEmitterLocal::CheckForCompletion(int current44kHzTime)
 
 						continue;
 					}
-				} else if ((chan->trigger44kHzTime + chan->leadinSample->LengthIn44kHzSamples() < current44kHzTime)
-#ifdef _OPENAL
-                    || ( state == AL_STOPPED ) //k: 2024
-#endif
-				) {
+				}
+				else if (
+					chan->trigger44kHzTime +
+					chan->leadinSample->LengthIn44kHzSamples() <
+					current44kHzTime
+					) {
 					chan->Stop();
 
 					// free hardware resources

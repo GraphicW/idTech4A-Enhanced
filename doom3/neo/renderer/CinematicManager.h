@@ -13,13 +13,17 @@ struct cinematicRequest_t
     int frameNumber;
 
     bool pending;
+    bool inFlight;
+    bool canceled;
 
     cinematicRequest_t()
         : cinematic(NULL),
         image(NULL),
         requestedTime(0),
         frameNumber(0),
-        pending(false)
+        pending(false),
+        inFlight(false),
+        canceled(false)
     {
     }
 };
@@ -36,6 +40,10 @@ public:
 
     bool TakePendingRequest(
         cinematicRequest_t& request
+    );
+
+    bool CompleteRequest(
+        idCinematic* cinematic
     );
 
     void Cancel(

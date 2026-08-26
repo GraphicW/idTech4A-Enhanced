@@ -2756,6 +2756,22 @@ bool idRenderModelStatic::FindSurfaceWithId(int id, int &surfaceNum)
 	return false;
 }
 
+/*
+=================
+idRenderModelStatic::FindMutableSurfaceWithId
+=================
+*/
+modelSurface_t* idRenderModelStatic::FindMutableSurfaceWithId(int id)
+{
+	for (int i = 0; i < surfaces.Num(); i++) {
+		if (surfaces[i].id == id) {
+			return &surfaces[i];
+		}
+	}
+
+	return NULL;
+}
+
 #ifdef _RAVEN //k: for ShowSurface/HideSurface, static model using surfaces index as mask: 1 << index, name is shader material name
 int idRenderModelStatic::GetSurfaceMask(const char *name) const
 {

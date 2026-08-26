@@ -1231,16 +1231,6 @@ void idSoundWorldLocal::ForegroundUpdate(int current44kHzTime)
 		}
 	}
 
-	int sndElapsed = Sys_Milliseconds() - sndStart;
-
-	if (sndElapsed > 25) {
-		common->Printf(
-			"SND TOTAL %d ms emitters=%d\n",
-			sndElapsed,
-			emitters.Num()
-		);
-	}
-
 	Sys_LeaveCriticalSection();
 
 	//

@@ -124,13 +124,31 @@ int idImage::BitsForInternalFormat(int internalFormat) const
         case GL_COLOR_INDEX:
             return 8;
 #endif
-        case GL_COMPRESSED_RGB_ARB:
-            return 4;			// not sure
-        case GL_COMPRESSED_RGBA_ARB:
-            return 8;			// not sure
-        default:
-            common->Error( "R_BitsForInternalFormat: BAD FORMAT:%i", internalFormat );
-    }
+
+		case GL_COMPRESSED_RGB_ARB:
+			return 4;
+
+		case GL_COMPRESSED_RGBA_ARB:
+			return 8;
+
+		case GL_DEPTH_COMPONENT16:
+			return 16;
+
+		case GL_DEPTH_COMPONENT24:
+			return 24;
+
+		case GL_DEPTH24_STENCIL8:
+			return 32;
+
+		default:
+#ifdef _MSC_VER
+			__debugbreak();
+#endif
+			common->Error(
+				"R_BitsForInternalFormat: BAD FORMAT:%i",
+				internalFormat
+			);
+        }
     return 0;
 }
 
@@ -2139,50 +2157,9 @@ void	idImage::ActuallyLoadImage(bool checkForPrecompressed, bool fromBackEnd)
 
 		if (cinematic)
 		{
-			cinData_t cin;
-
-			int decodeStart = Sys_Milliseconds();
-			cin = cinematic->ImageForTime(cinmaticNextTime);
-			int decodeElapsed = Sys_Milliseconds() - decodeStart;
-
-			if (decodeElapsed > 10)
-			{
-				common->Printf(
-					"CINEMATIC DECODE %s %d ms\n",
-					imgName.c_str(),
-					decodeElapsed
-				);
-			}
-
-			if (texnum == TEXTURE_NOT_LOADED)
-			{
-				qglGenTextures(1, &texnum);
-			}
-
-			if (cin.image)
-			{
-				int uploadStart = Sys_Milliseconds();
-
-				UploadScratch(
-					cin.image,
-					cin.imageWidth,
-					cin.imageHeight
-				);
-
-				int uploadElapsed = Sys_Milliseconds() - uploadStart;
-
-				if (uploadElapsed > 10)
-				{
-					common->Printf(
-						"CINEMATIC UPLOAD %s %dx%d %d ms\n",
-						imgName.c_str(),
-						cin.imageWidth,
-						cin.imageHeight,
-						uploadElapsed
-					);
-				}
-			}
-
+			// Cinematic decoding is owned exclusively by idCinematicWorker.
+			// RB_BindVariableStageImage registers frame requests, and
+			// HandlePendingImage uploads completed frames.
 			return;
 		}
 	}

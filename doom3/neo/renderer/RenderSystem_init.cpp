@@ -31,6 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "tr_local.h"
 #include "CinematicManager.h"
+#include "CinematicWorker.h"
 
 #ifdef _SPLASHDAMAGE
 #include "renderer/RenderProgramManager.h"
@@ -2533,6 +2534,10 @@ void idRenderSystemLocal::Init(void)
 
 	renderModelManager->Init();
 
+#ifdef _MULTITHREAD
+	cinematicWorker.Init();
+#endif
+
 	// set the identity space
 	identitySpace.modelMatrix[0*4+0] = 1.0f;
 	identitySpace.modelMatrix[1*4+1] = 1.0f;
@@ -2563,6 +2568,7 @@ void idRenderSystemLocal::Shutdown(void)
 		renderThread->BackendThreadShutdown();
 	}
 
+	cinematicWorker.Shutdown();
 	cinematicManager.Clear();
 #endif
 

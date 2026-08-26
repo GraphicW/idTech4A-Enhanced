@@ -259,8 +259,6 @@ idImage * idRenderThread::GetNextPurgeImage( void )
 
 void idRenderThread::HandlePendingImage(void)
 {
-    cinematicWorker.Pump();
-
     int queueStart = Sys_Milliseconds();
     int imageCount = 0;
 
@@ -269,6 +267,50 @@ void idRenderThread::HandlePendingImage(void)
     while ((img = GetNextPurgeImage()) != NULL)
     {
         img->PurgeImage();
+    }
+
+    // Upload completed cinematic frames
+    cinematicFrame_t frame;
+
+    while (
+        cinematicWorker.TakeCompletedFrame(
+            frame
+        )
+        )
+    {
+        const int expectedBytes =
+            frame.width *
+            frame.height *
+            4;
+
+        if (
+            frame.image &&
+            frame.width > 0 &&
+            frame.height > 0 &&
+            frame.pixels.Num() == expectedBytes
+            )
+        {
+            // UploadScratch() calls Bind(). A new cinematic image has no
+            // GL texture yet, and the multithreaded Bind() fallback would
+            // bind blackImage. Allocate the cinematic texture first so
+            // UploadScratch() binds and updates the correct texture.
+            if (
+                frame.image->texnum ==
+                idImage::TEXTURE_NOT_LOADED
+                )
+            {
+                qglGenTextures(
+                    1,
+                    &frame.image->texnum
+                );
+            }
+
+            frame.image->UploadScratch(
+                frame.pixels.Ptr(),
+                frame.width,
+                frame.height
+            );
+        }
     }
 
     // Load all images

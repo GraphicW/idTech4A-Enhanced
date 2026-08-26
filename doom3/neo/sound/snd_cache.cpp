@@ -197,45 +197,62 @@ void idSoundCache::BeginLevelLoad()
 ====================
 EndLevelLoad
 
-Free all samples marked as unused
+Modern residency policy:
+Keep loaded samples resident for the lifetime of the sound cache.
+
+Sound worlds and active channels retain raw idSoundSample pointers, and
+multiple sound worlds may remain alive across a level transition. Purging
+solely from levelLoadReferenced can therefore invalidate data still used by
+the menu sound world or another active channel.
+
+Explicit reload, shutdown, and com_purgeAll remain the authoritative purge
+paths.
 ====================
 */
 void idSoundCache::EndLevelLoad()
 {
-	int	useCount, purgeCount;
-	common->Printf("----- idSoundCache::EndLevelLoad -----\n");
+	int referencedBytes = 0;
+	int residentBytes = 0;
+
+	common->Printf(
+		"----- idSoundCache::EndLevelLoad -----\n"
+	);
 
 	insideLevelLoad = false;
 
-	// purge the ones we don't need
-	useCount = 0;
-	purgeCount = 0;
+	for (int i = 0; i < listCache.Num(); i++) {
+		idSoundSample* sample = listCache[i];
 
-	for (int i = 0 ; i < listCache.Num() ; i++) {
-		idSoundSample	*sample = listCache[ i ];
-
-		if (!sample) {
+		if (!sample || sample->purged) {
 			continue;
 		}
 
-		if (sample->purged) {
-			continue;
-		}
+		residentBytes += sample->objectMemSize;
 
-		if (!sample->levelLoadReferenced) {
-//			common->Printf( "Purging %s\n", sample->name.c_str() );
-			purgeCount += sample->objectMemSize;
-			sample->PurgeSoundSample();
-		} else {
-			useCount += sample->objectMemSize;
+		if (sample->levelLoadReferenced) {
+			referencedBytes += sample->objectMemSize;
 		}
 	}
 
 	soundCacheAllocator.FreeEmptyBaseBlocks();
 
-	common->Printf("%5ik referenced\n", useCount / 1024);
-	common->Printf("%5ik purged\n", purgeCount / 1024);
-	common->Printf("----------------------------------------\n");
+	common->Printf(
+		"%5ik referenced this level\n",
+		referencedBytes / 1024
+	);
+
+	common->Printf(
+		"%5ik resident sound data\n",
+		residentBytes / 1024
+	);
+
+	common->Printf(
+		"level-end sound purging disabled\n"
+	);
+
+	common->Printf(
+		"----------------------------------------\n"
+	);
 }
 
 /*

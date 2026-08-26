@@ -1727,13 +1727,12 @@ void idMaterial::ParseStage(idLexer &src, const textureRepeat_t trpDefault)
 
 			ts->cinematic = idCinematic::Alloc();
 			ts->cinematic->InitFromFile(token.c_str(), loop);
+
 #ifdef _MULTITHREAD
-			if(multithreadActive)
-			{
-				// Due to multithreading we create an image for each cinematic so they can be updated cleanly
-				ts->image = globalImages->AllocImage("cinematic_temp");
-				ts->image->cinematic = ts->cinematic;
-			}
+			// Allocate the destination regardless of the current runtime state.
+			// Materials may be parsed before multithreadActive becomes true.
+			ts->image = globalImages->AllocImage("cinematic_temp");
+			ts->image->cinematic = ts->cinematic;
 #endif
 			continue;
 		}
@@ -4326,7 +4325,18 @@ void idMaterial::CloseCinematic(void) const
 			}
 #endif
 
+			common->Printf(
+				"[CloseCinematic] cinematic=%p image=%p\n",
+				stages[i].texture.cinematic,
+				stages[i].texture.image
+			);
+			
 			stages[i].texture.cinematic->Close();
+
+			common->Printf(
+				"[DeleteCinematic] cinematic=%p\n",
+				stages[i].texture.cinematic
+			);
 
 			delete stages[i].texture.cinematic;
 			stages[i].texture.cinematic = NULL;

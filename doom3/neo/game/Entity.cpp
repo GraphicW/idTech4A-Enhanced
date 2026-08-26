@@ -5256,14 +5256,27 @@ const idEventDef EV_SetJointAngle("setJointAngle", "ddv");
 const idEventDef EV_GetJointPos("getJointPos", "d", 'v');
 const idEventDef EV_GetJointAngle("getJointAngle", "d", 'v');
 
+/*
+===============================================================================
+
+	Damage-effect allocation
+
+Damage effects are created during melee and projectile impact handling and
+freed after their particle system finishes. Use a block allocator to avoid
+general heap allocation on combat impact frames.
+
+===============================================================================
+*/
+static idBlockAlloc<damageEffect_t, 128> damageEffectAllocator;
+
 CLASS_DECLARATION(idEntity, idAnimatedEntity)
 EVENT(EV_GetJointHandle,		idAnimatedEntity::Event_GetJointHandle)
 EVENT(EV_ClearAllJoints,		idAnimatedEntity::Event_ClearAllJoints)
 EVENT(EV_ClearJoint,			idAnimatedEntity::Event_ClearJoint)
 EVENT(EV_SetJointPos,			idAnimatedEntity::Event_SetJointPos)
-EVENT(EV_SetJointAngle,		idAnimatedEntity::Event_SetJointAngle)
+EVENT(EV_SetJointAngle,			idAnimatedEntity::Event_SetJointAngle)
 EVENT(EV_GetJointPos,			idAnimatedEntity::Event_GetJointPos)
-EVENT(EV_GetJointAngle,		idAnimatedEntity::Event_GetJointAngle)
+EVENT(EV_GetJointAngle,			idAnimatedEntity::Event_GetJointAngle)
 END_CLASS
 
 /*
@@ -5288,7 +5301,7 @@ idAnimatedEntity::~idAnimatedEntity()
 
 	for (de = damageEffects; de; de = damageEffects) {
 		damageEffects = de->next;
-		delete de;
+		damageEffectAllocator.Free(de);
 	}
 }
 
@@ -5630,15 +5643,18 @@ void idAnimatedEntity::AddLocalDamageEffect(jointHandle_t jointNum, const idVec3
 	}
 
 	if (*bleed != '\0') {
-		de = new damageEffect_t;
-		de->next = this->damageEffects;
-		this->damageEffects = de;
+		de = damageEffectAllocator.Alloc();
 
 		de->jointNum = jointNum;
 		de->localOrigin = localOrigin;
 		de->localNormal = localNormal;
-		de->type = static_cast<const idDeclParticle *>(declManager->FindType(DECL_PARTICLE, bleed));
+		de->type = static_cast<const idDeclParticle*>(
+			declManager->FindType(DECL_PARTICLE, bleed)
+			);
 		de->time = gameLocal.time;
+
+		de->next = damageEffects;
+		damageEffects = de;
 	}
 }
 
@@ -5659,7 +5675,7 @@ void idAnimatedEntity::UpdateDamageEffects(void)
 
 		if (de->time == 0) {	// FIXME:SMOKE
 			*prev = de->next;
-			delete de;
+			damageEffectAllocator.Free(de);
 		} else {
 			prev = &de->next;
 		}

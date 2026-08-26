@@ -173,7 +173,7 @@ void idCinematic::InitCinematic(void)
 		ROQ_YY_tab[i] = (int)((i << 6) | (i >> 2));
 	}
 
-	file = (byte *)Mem_Alloc(65536);
+	file = (byte*)Mem_Alloc(65536 + 8);
 	vq2 = (word *)Mem_Alloc(256*16*4 * sizeof(word));
 	vq4 = (word *)Mem_Alloc(256*64*4 * sizeof(word));
 	vq8 = (word *)Mem_Alloc(256*256*4 * sizeof(word));

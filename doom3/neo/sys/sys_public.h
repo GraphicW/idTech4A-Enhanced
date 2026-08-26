@@ -844,7 +844,7 @@ const int MAX_TRIGGER_EVENTS		= (
 + 3
 #endif
 #ifdef _MULTITHREAD
-+ 4
++ 6
 #endif
 #ifdef _OPENSLES
 + 2
@@ -862,12 +862,17 @@ enum {
 	TRIGGER_EVENT_CONTEXT_DESTROYED, // doom3 thread/render thread -> Android SurfaceView thread: notify OpenGL context destroyed
 	TRIGGER_EVENT_WINDOW_CREATED, // Android SurfaceView thread -> doom3/renderer thread: notify native window is created
 #endif
+
 #ifdef _MULTITHREAD
-	TRIGGER_EVENT_RUN_BACKEND, // doom3 thread -> render thread: notify backend run render function
-	TRIGGER_EVENT_BACKEND_FINISHED, // render thread -> doom3 thread: notify frontend rendering finished
-	TRIGGER_EVENT_IMAGES_PROCESSES, // render thread -> doom3 thread: notify frontend texture's OpenGL function called
-	TRIGGER_EVENT_RENDER_THREAD_FINISHED, // render thread -> doom3 thread: notify render thread finished
+	TRIGGER_EVENT_RUN_BACKEND, // doom3 thread -> renderer thread: notify renderer to run backend
+	TRIGGER_EVENT_BACKEND_FINISHED, // renderer thread -> doom3 thread: notify renderer backend finished
+	TRIGGER_EVENT_IMAGES_PROCESSES, // renderer thread -> doom3 thread: notify renderer images processed
+	TRIGGER_EVENT_RENDER_THREAD_FINISHED, // renderer thread -> doom3 thread: notify render thread finished
+
+	TRIGGER_EVENT_CINEMATIC_WORKER, // doom3 thread -> cinematic worker thread: notify cinematic worker to run
+	TRIGGER_EVENT_CINEMATIC_WORKER_FINISHED, // cinematic worker thread -> doom3 thread: notify cinematic worker finished
 #endif
+
 #ifdef _OPENSLES
 	TRIGGER_EVENT_SOUND_FRONTEND_WRITE_FINISHED, // doom3 sound thread -> OpenSLES thread: frontend write data finished, and notify backend allow read data
 	TRIGGER_EVENT_SOUND_BACKEND_READ_FINISHED, // OpenSLES thread -> doom3 sound thread: backend read data finished, and notify frontend allow write data

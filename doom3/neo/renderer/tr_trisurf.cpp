@@ -304,10 +304,8 @@ int R_TriSurfMemory(const srfTriangles_t *tri)
 		return total;
 	}
 
-	if (tri->shadowVertexes != NULL) {
-		total += tri->numVerts * sizeof(tri->shadowVertexes[0]);
-	} else if (tri->verts != NULL) {
-		if (tri->ambientSurface == NULL || tri->verts != tri->ambientSurface->verts) {
+	if (tri->verts != NULL) {
+		if (tri->ambientSurface == NULL) {
 			total += tri->numVerts * sizeof(tri->verts[0]);
 		}
 	}
@@ -390,14 +388,10 @@ void R_ReallyFreeStaticTriSurf(srfTriangles_t *tri)
 	R_FreeStaticTriSurfVertexCaches(tri);
 
 	if (tri->verts != NULL) {
-		// R_CreateLightTris points tri->verts at the verts of the ambient surface
-		if (tri->ambientSurface == NULL || tri->verts != tri->ambientSurface->verts) {
-			idDynamicBlock<idDrawVert>* vertBlock =
-				((idDynamicBlock<idDrawVert> *)tri->verts) - 1;
-
-			assert(vertBlock->node == NULL);
+		// Interaction surfaces with an ambientSurface borrow the ambient verts.
+		if (tri->ambientSurface == NULL) {
 			triVertexAllocator.Free(tri->verts);
-#ifdef _SPLASHDAMAGE //karin: save allocated verts num for ETQW sdWake, else it causes idVertexCache::Alloc with size = 0
+#ifdef _SPLASHDAMAGE
 			tri->numAllocedVerts = 0;
 #endif
 		}
@@ -460,15 +454,12 @@ void R_CheckStaticTriSurfMemory(const srfTriangles_t *tri)
 	if (!tri) {
 		return;
 	}
-
-	if (tri->verts != NULL) {
-		// R_CreateLightTris points tri->verts at the verts of the ambient surface
-		if (tri->ambientSurface == NULL || tri->verts != tri->ambientSurface->verts) {
-			const char *error = triVertexAllocator.CheckMemory(tri->verts);
-			assert(error == NULL);
+		// Interaction surfaces bo*row their ambient surface's verts. 
+		if (tri->ambientSurface == NULL) {
+		const char *error = triVertexAllocator.CheckMemory(tri->verts);
+		assert(error == NULL);
 		}
-	}
-
+	
 	if (!tri->deformedSurface) {
 		if (tri->indexes != NULL) {
 			// if a surface is completely inside a light volume R_CreateLightTris points tri->indexes at the indexes of the ambient surface
@@ -498,10 +489,13 @@ void R_FreeDeferredTriSurfs(frameData_t* frame)
 		return;
 	}
 
+	// Validate the complete list before freeing anything.
+	// This distinguishes pointers that were already freed before this call
+	// from pointers freed earlier during this same list traversal.
 	for (tri = frame->firstDeferredFreeTriSurf; tri; tri = next) {
 		next = tri->nextDeferredFree;
 		R_ReallyFreeStaticTriSurf(tri);
-		}
+	}
 
 	frame->firstDeferredFreeTriSurf = NULL;
 	frame->lastDeferredFreeTriSurf = NULL;
@@ -545,10 +539,8 @@ void R_FreeStaticTriSurf(srfTriangles_t *tri)
 			srfTriangles_t* queued = frame->firstDeferredFreeTriSurf;
 			queued != NULL;
 			queued = queued->nextDeferredFree
-			)
-		{
-			if (queued == tri)
-			{
+			) {
+			if (queued == tri) {
 				common->FatalError(
 					"R_FreeStaticTriSurf: duplicate deferred free, tri=%p verts=%p",
 					tri,

@@ -61,11 +61,16 @@ typedef struct singleSmoke_s {
 } singleSmoke_t;
 
 typedef struct {
-	const idParticleStage 		*stage;
-	singleSmoke_t 				*smokes;
+	const idParticleStage		* stage;
+	singleSmoke_t				* smokes;
 	int surfaceId;
-} activeSmokeStage_t;
 
+	// Persistent geometry capacity for tris active particle stage.
+	// numverts and numIndexes contain active counts, so capacity must
+	// be tracked separately when reusing the triangle buffers.
+	int allocatedVerts;
+	int allocatedIndexes;
+} activeSmokeStage_t;
 
 class idSmokeParticles
 {

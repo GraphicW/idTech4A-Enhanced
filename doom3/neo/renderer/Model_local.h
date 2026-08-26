@@ -136,9 +136,11 @@ class idRenderModelStatic : public idRenderModel
         bool						ConvertFBXToModelSurfaces( const class idModelFbx* fbx );
 #endif
 
-		bool						DeleteSurfaceWithId(int id);
+		virtual						modelSurface_t* FindMutableSurfaceWithId(int id);
+		virtual bool				DeleteSurfaceWithId(int id);
+
 		void						DeleteSurfacesWithNegativeId(void);
-		bool						FindSurfaceWithId(int id, int &surfaceNum);
+		bool						FindSurfaceWithId(int id, int& surfaceNum);
 #ifdef _RAVEN //k: for ShowSurface/HideSurface, static model using surfaces index as mask: 1 << index, name is shader material name
 		virtual int                 GetSurfaceMask(const char *name) const;
 

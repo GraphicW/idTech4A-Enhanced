@@ -332,6 +332,12 @@ class idRenderModel
 		// get a pointer to a surface
 		virtual const modelSurface_t *Surface(int surfaceNum) const = 0;
 
+		// Find a mutable surface by ID.
+		virtual modelSurface_t* FindMutableSurfaceWithId(int id) = 0;
+
+		// Delete a surface by ID.
+		virtual bool DeleteSurfaceWithId(int i) = 0;
+
 		// Allocates surface triangles.
 		// Allocates memory for srfTriangles_t::verts and srfTriangles_t::indexes
 		// The allocated memory is not initialized.
