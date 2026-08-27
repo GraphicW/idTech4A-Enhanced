@@ -129,6 +129,7 @@ idSmokeParticles::FreeSmokes
 */
 void idSmokeParticles::FreeSmokes(void)
 {
+	idRenderModel* model = renderEntity.hModel;
 	for (int activeStageNum = 0; activeStageNum < activeStages.Num(); activeStageNum++) {
 		singleSmoke_t *smoke, *next, *last;
 
@@ -159,7 +160,10 @@ void idSmokeParticles::FreeSmokes(void)
 		}
 
 		if (!active->smokes) {
-			// remove this from the activeStages list
+			if (model != NULL) {
+				model->DeleteSurfaceWithId(active->surfaceId);
+			}
+
 			activeStages.RemoveIndex(activeStageNum);
 			activeStageNum--;
 		}
@@ -357,15 +361,10 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 		modelSurface_t* existingSurface =
 			model->FindMutableSurfaceWithId(active->surfaceId);
 
-		if (existingSurface != NULL) {
-			gameLocal.Warning(
-				"SmokeParticles: existing surface %d survived InitEmpty",
-				active->surfaceId
-			);
-		}
+		(void)existingSurface;
 
-		if (!stage->material) {
-			continue;
+		if (!stage->material) { 
+			continue; 
 		}
 
 		// allocate a srfTriangles that can hold all the particles
@@ -379,6 +378,16 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 
 		const int requiredVerts = quads * 4;
 		const int requiredIndexes = quads * 6;
+
+		active->allocatedVerts = requiredVerts;
+		active->allocatedIndexes = requiredIndexes;
+
+		if (existingSurface != NULL) {
+			gameLocal.Warning(
+				"SmokeParticles: surface %d exists",
+				active->surfaceId
+			);
+		}
 
 		srfTriangles_t* tri =
 			model->AllocSurfaceTriangles(
