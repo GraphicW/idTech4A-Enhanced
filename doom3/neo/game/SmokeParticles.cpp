@@ -343,10 +343,6 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 	// Clear cached vertex data before geometry updates.
 	model->FreeVertexCache();
 
-	
-	// FIXME: This is a hack to clear out the old surfaces, since we don't have a way to reuse them yet.
-	model->InitEmpty(smokeParticle_SnapshotName);
-
 	currentParticleTime = renderView->time;
 
 	particleGen_t g;
@@ -361,8 +357,6 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 		const idParticleStage *stage = active->stage;
 		modelSurface_t* existingSurface =
 			model->FindMutableSurfaceWithId(active->surfaceId);
-
-		(void)existingSurface;
 
 		if (!stage->material) { 
 			continue; 
@@ -380,32 +374,52 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 		const int requiredVerts = quads * 4;
 		const int requiredIndexes = quads * 6;
 
-		active->allocatedVerts = requiredVerts;
-		active->allocatedIndexes = requiredIndexes;
-
-		if (existingSurface != NULL) {
-			gameLocal.Warning(
-				"SmokeParticles: surface %d exists",
-				active->surfaceId
-			);
-		}
-
 		srfTriangles_t* tri =
-			model->AllocSurfaceTriangles(
+			existingSurface != NULL
+			? existingSurface->geometry
+			: NULL;
+
+		const bool needsAllocation =
+			tri == NULL ||
+			active->allocatedVerts < requiredVerts ||
+			active->allocatedIndexes < requiredIndexes;
+
+		if (needsAllocation) {
+			if (tri != NULL) {
+				model->FreeSurfaceTriangles(tri);
+				tri = NULL;
+				existingSurface->geometry = NULL;
+			}
+
+			tri = model->AllocSurfaceTriangles(
 				requiredVerts,
 				requiredIndexes
 			);
 
-		tri->numIndexes = requiredIndexes;
-		tri->numVerts = requiredVerts;
+			active->allocatedVerts = requiredVerts;
+			active->allocatedIndexes = requiredIndexes;
 
-		// just always draw the particles
-		tri->bounds[0][0] =
-		        tri->bounds[0][1] =
-		                tri->bounds[0][2] = -99999;
-		tri->bounds[1][0] =
-		        tri->bounds[1][1] =
-		                tri->bounds[1][2] = 99999;
+			if (existingSurface != NULL) {
+				existingSurface->geometry = tri;
+			}
+			else {
+				modelSurface_t surf;
+
+				surf.geometry = tri;
+				surf.shader = stage->material;
+				surf.id = active->surfaceId;
+
+				model->AddSurface(surf);
+
+				tri = model->AllocSurfaceTriangles(
+					requiredVerts,
+					requiredIndexes
+				);
+			}
+		}
+
+		tri->numIndexes = 0;
+		tri->numVerts = 0;
 
 		tri->numVerts = 0;
 
@@ -449,11 +463,14 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 
 		if (tri->numVerts == 0) {
 
-			// they were all removed
-			model->FreeSurfaceTriangles(tri);
+			tri->numIndexes = 0;
+			tri->bounds.Clear();
 
 			if (!active->smokes) {
-				// remove this from the activeStages list
+				model->DeleteSurfaceWithId(
+					active->surfaceId
+				);
+
 				activeStages.RemoveIndex(activeStageNum);
 				activeStageNum--;
 			}
@@ -473,12 +490,8 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 
 			tri->numIndexes = indexes;
 
-			modelSurface_t	surf;
-			surf.geometry = tri;
-			surf.shader = stage->material;
-			surf.id = active->surfaceId;
-
-			model->AddSurface(surf);
+			tri->tangentsCalculated = false;
+			tri->facePlanesCalculated = false;
 		}
 	}
 
