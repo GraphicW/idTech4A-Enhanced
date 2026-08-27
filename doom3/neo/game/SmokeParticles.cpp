@@ -343,8 +343,16 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 	// Clear cached vertex data before geometry updates.
 	model->FreeVertexCache();
 
-	// FIXME: we should be able to just clear the surfaces, but that is not implemented yet
+	const int preClearSurfaceCount = model->NumSurfaces();
+	// FIXME: This is a hack to clear out the old surfaces, since we don't have a way to reuse them yet.
 	model->InitEmpty(smokeParticle_SnapshotName);
+
+	if (preClearSurfaceCount > 0) {
+		gameLocal.Printf(
+			"SmokeParticles cleared %d surfaces\n",
+			preClearSurfaceCount
+		);
+	}
 
 	currentParticleTime = renderView->time;
 
