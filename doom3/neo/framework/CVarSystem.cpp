@@ -937,7 +937,12 @@ void idCVarSystemLocal::WriteFlaggedVariables(int flags, const char *setCmd, idF
 		idInternalCVar *cvar = cvars[i];
 
 		if (cvar->GetFlags() & flags) {
-			f->Printf("%s %s \"%s\"\n", setCmd, cvar->GetName(), cvar->GetString());
+
+			f->Printf(
+				"%s %s \"%s\"\n",
+				setCmd,
+				cvar->GetName(),
+				cvar->GetString());
 		}
 	}
 }

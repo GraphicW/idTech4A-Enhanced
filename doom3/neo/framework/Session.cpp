@@ -3492,9 +3492,8 @@ void idSessionLocal::Frame()
 	// FIXME: deserves a cleanup and abstraction
 #if defined( _WIN32 )
 
-	// Spin in place if needed.  The game should yield the cpu if
-	// it is running over 60 hz, because there is fundamentally
-	// nothing useful for it to do.
+	const int waitStart = Sys_Milliseconds();
+
 	while (1) {
 		latchedTicNumber = com_ticNumber;
 
@@ -3503,6 +3502,17 @@ void idSessionLocal::Frame()
 		}
 
 		Sys_Sleep(1);
+	}
+
+	const int waitElapsed = Sys_Milliseconds() - waitStart;
+
+	if (waitElapsed > 20) {
+		common->Printf(
+			"SESSION BLOCK TicWait %d ms latched=%d min=%d com_tic=%d\n",
+			waitElapsed,
+			latchedTicNumber,
+			minTic,
+			com_ticNumber);
 	}
 
 #else

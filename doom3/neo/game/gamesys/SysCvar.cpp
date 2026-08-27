@@ -111,7 +111,7 @@ idCVar g_gravity("g_gravity",		DEFAULT_GRAVITY_STRING, CVAR_GAME | CVAR_FLOAT, "
 idCVar g_skipFX("g_skipFX",					"0",			CVAR_GAME | CVAR_BOOL, "");
 idCVar g_skipParticles("g_skipParticles",			"0",			CVAR_GAME | CVAR_BOOL, "");
 
-idCVar g_disasm("g_disasm",					"0",			CVAR_GAME | CVAR_BOOL, "disassemble script into base/script/disasm.txt on the local drive when script is compiled");
+idCVar g_disasm("g_disasm",				    	"0",			CVAR_GAME | CVAR_BOOL, "disassemble script into base/script/disasm.txt on the local drive when script is compiled");
 idCVar g_debugBounds("g_debugBounds",			"0",			CVAR_GAME | CVAR_BOOL, "checks for models with bounds > 2048");
 idCVar g_debugAnim("g_debugAnim",				"-1",			CVAR_GAME | CVAR_INTEGER, "displays information on which animations are playing on the specified entity number.  set to -1 to disable.");
 idCVar g_debugMove("g_debugMove",				"0",			CVAR_GAME | CVAR_BOOL, "");
@@ -119,11 +119,11 @@ idCVar g_debugDamage("g_debugDamage",			"0",			CVAR_GAME | CVAR_BOOL, "");
 idCVar g_debugWeapon("g_debugWeapon",			"0",			CVAR_GAME | CVAR_BOOL, "");
 idCVar g_debugScript("g_debugScript",			"0",			CVAR_GAME | CVAR_BOOL, "");
 idCVar g_debugMover("g_debugMover",				"0",			CVAR_GAME | CVAR_BOOL, "");
-idCVar g_debugTriggers("g_debugTriggers",			"0",			CVAR_GAME | CVAR_BOOL, "");
-idCVar g_debugCinematic("g_debugCinematic",			"0",			CVAR_GAME | CVAR_BOOL, "");
-idCVar g_stopTime("g_stopTime",				"0",			CVAR_GAME | CVAR_BOOL, "");
-idCVar g_damageScale("g_damageScale",			"1",			CVAR_GAME | CVAR_FLOAT | CVAR_ARCHIVE, "scale final damage on player by this factor");
-idCVar g_armorProtection("g_armorProtection",		"0.3",			CVAR_GAME | CVAR_FLOAT | CVAR_ARCHIVE, "armor takes this percentage of damage");
+idCVar g_debugTriggers("g_debugTriggers",		"0",			CVAR_GAME | CVAR_BOOL, "");
+idCVar g_debugCinematic("g_debugCinematic",		"0",			CVAR_GAME | CVAR_BOOL, "");
+idCVar g_stopTime("g_stopTime",				    "0",			CVAR_GAME | CVAR_BOOL, "");
+idCVar g_damageScale("g_damageScale",           "1",            CVAR_GAME | CVAR_FLOAT, "scale final damage on player by this factor");
+idCVar g_armorProtection("g_armorProtection",	"0.3",			CVAR_GAME | CVAR_FLOAT | CVAR_ARCHIVE, "armor takes this percentage of damage");
 idCVar g_armorProtectionMP("g_armorProtectionMP",		"0.6",			CVAR_GAME | CVAR_FLOAT | CVAR_ARCHIVE, "armor takes this percentage of damage in mp");
 idCVar g_useDynamicProtection("g_useDynamicProtection",	"1",			CVAR_GAME | CVAR_BOOL | CVAR_ARCHIVE, "scale damage and armor dynamically to keep the player alive more often");
 idCVar g_healthTakeTime("g_healthTakeTime",			"5",			CVAR_GAME | CVAR_INTEGER | CVAR_ARCHIVE, "how often to take health in nightmare mode");

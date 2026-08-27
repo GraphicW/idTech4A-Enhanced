@@ -399,6 +399,19 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 			active->allocatedVerts = requiredVerts;
 			active->allocatedIndexes = requiredIndexes;
 
+			for (int i = 0, indexes = 0;
+				i < requiredVerts;
+				i += 4)
+			{
+				tri->indexes[indexes + 0] = i;
+				tri->indexes[indexes + 1] = i + 2;
+				tri->indexes[indexes + 2] = i + 3;
+				tri->indexes[indexes + 3] = i;
+				tri->indexes[indexes + 4] = i + 3;
+				tri->indexes[indexes + 5] = i + 1;
+				indexes += 6;
+			}
+
 			if (existingSurface != NULL) {
 				existingSurface->geometry = tri;
 			}
@@ -410,20 +423,13 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 				surf.id = active->surfaceId;
 
 				model->AddSurface(surf);
-
-				tri = model->AllocSurfaceTriangles(
-					requiredVerts,
-					requiredIndexes
-				);
 			}
 		}
 
 		tri->numIndexes = 0;
 		tri->numVerts = 0;
 
-		tri->numVerts = 0;
-
-		for (last = NULL, smoke = active->smokes; smoke; smoke = next) {
+			for (last = NULL, smoke = active->smokes; smoke; smoke = next) {
 			next = smoke->next;
 
 			g.frac = (float)(gameLocal.time - smoke->privateStartTime) / (stage->particleLife * 1000);
@@ -474,21 +480,20 @@ bool idSmokeParticles::UpdateRenderEntity(renderEntity_s *renderEntity, const re
 				activeStages.RemoveIndex(activeStageNum);
 				activeStageNum--;
 			}
-		} else {
-			// build the index list
-			int	indexes = 0;
+		}
+		else {
+			tri->numIndexes = (tri->numVerts / 4) * 6;
 
-			for (int i = 0 ; i < tri->numVerts ; i += 4) {
-				tri->indexes[indexes+0] = i;
-				tri->indexes[indexes+1] = i+2;
-				tri->indexes[indexes+2] = i+3;
-				tri->indexes[indexes+3] = i;
-				tri->indexes[indexes+4] = i+3;
-				tri->indexes[indexes+5] = i+1;
-				indexes += 6;
-			}
+			// Smoke particles move independently of the persistent model surface.
+			// Keep the surface visible instead of allowing stale or empty bounds
+			// to cull live particles.
+			tri->bounds[0][0] =
+				tri->bounds[0][1] =
+				tri->bounds[0][2] = -99999;
 
-			tri->numIndexes = indexes;
+			tri->bounds[1][0] =
+				tri->bounds[1][1] =
+				tri->bounds[1][2] = 99999;
 
 			tri->tangentsCalculated = false;
 			tri->facePlanesCalculated = false;

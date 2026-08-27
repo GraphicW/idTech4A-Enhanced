@@ -1167,7 +1167,17 @@ void idCommonLocal::WriteFlaggedCVarsToFile(const char *filename, int flags, con
 {
 	idFile *f;
 
+	const int start = Sys_Milliseconds();
+
 	f = fileSystem->OpenFileWrite(filename);
+
+	const int elapsed = Sys_Milliseconds() - start;
+
+	if (elapsed > 20) {
+		Printf(
+			"CONFIG WRITE OpenFileWrite %d ms\n",
+			elapsed);
+	}
 
 	if (!f) {
 		Printf("Couldn't write %s.\n", filename);
@@ -1194,7 +1204,17 @@ void idCommonLocal::WriteConfigToFile(const char *filename)
 	idBase64 out;
 #endif
 
+	const int openStart = Sys_Milliseconds();
+
 	f = fileSystem->OpenFileWrite(filename);
+
+	const int openElapsed = Sys_Milliseconds() - openStart;
+
+	if (openElapsed > 20) {
+		Printf(
+			"CONFIG WRITE OpenFileWrite %d ms\n",
+			openElapsed);
+	}
 
 	if (!f) {
 		Printf("Couldn't write %s.\n", filename);
@@ -1243,11 +1263,40 @@ void idCommonLocal::WriteConfiguration(void)
 	bool developer = com_developer.GetBool();
 	com_developer.SetBool(false);
 
-	WriteConfigToFile(CONFIG_FILE);
-#ifdef _SPLASHDAMAGE //karin: sync modified cvar/key bindings to user profile
-	networkServiceLocal.SaveUserModified();
+	{
+		const int start = Sys_Milliseconds();
+
+		WriteConfigToFile(CONFIG_FILE);
+
+		const int elapsed = Sys_Milliseconds() - start;
+		if (elapsed > 20) {
+			Printf("CONFIG BLOCK WriteConfigToFile %d ms\n", elapsed);
+		}
+	}
+
+#ifdef _SPLASHDAMAGE
+	{
+		const int start = Sys_Milliseconds();
+
+		networkServiceLocal.SaveUserModified();
+
+		const int elapsed = Sys_Milliseconds() - start;
+		if (elapsed > 20) {
+			Printf("CONFIG BLOCK SaveUserModified %d ms\n", elapsed);
+		}
+	}
 #endif
-	session->WriteCDKey();
+
+	{
+		const int start = Sys_Milliseconds();
+
+		session->WriteCDKey();
+
+		const int elapsed = Sys_Milliseconds() - start;
+		if (elapsed > 20) {
+			Printf("CONFIG BLOCK WriteCDKey %d ms\n", elapsed);
+		}
+	}
 
 	// restore the developer cvar
 	com_developer.SetBool(developer);
@@ -2777,24 +2826,67 @@ idCommonLocal::Frame
 void idCommonLocal::Frame(void)
 {
 	try {
-
+		const int commonFrameStart = Sys_Milliseconds();
 		// pump all the events
-		Sys_GenerateEvents();
+		{
+			const int start = Sys_Milliseconds();
+
+			Sys_GenerateEvents();
+
+			const int elapsed = Sys_Milliseconds() - start;
+			if (elapsed > 20) {
+				Printf("FRAME BLOCK Sys_GenerateEvents %d ms\n", elapsed);
+			}
+		}
 
 		// write config file if anything changed
-		WriteConfiguration();
+		{
+			const int start = Sys_Milliseconds();
+
+			WriteConfiguration();
+
+			const int elapsed = Sys_Milliseconds() - start;
+			if (elapsed > 20) {
+				Printf("FRAME BLOCK WriteConfiguration %d ms\n", elapsed);
+			}
+		}
 
 		// change SIMD implementation if required
 		if (com_forceGenericSIMD.IsModified()) {
+			const int start = Sys_Milliseconds();
+
 			InitSIMD();
+
+			const int elapsed = Sys_Milliseconds() - start;
+			if (elapsed > 20) {
+				Printf("FRAME BLOCK InitSIMD %d ms\n", elapsed);
+			}
 		}
 
-		eventLoop->RunEventLoop();
+		{
+			const int start = Sys_Milliseconds();
+
+			eventLoop->RunEventLoop();
+
+			const int elapsed = Sys_Milliseconds() - start;
+			if (elapsed > 20) {
+				Printf("FRAME BLOCK RunEventLoop %d ms\n", elapsed);
+			}
+		}
 
 #ifdef _IMGUI
-        R_ImGui_HandleCallback();
-#endif
+		{
+			const int start = Sys_Milliseconds();
 
+			R_ImGui_HandleCallback();
+
+			const int elapsed = Sys_Milliseconds() - start;
+			if (elapsed > 20) {
+				Printf("FRAME BLOCK ImGuiCallback %d ms\n", elapsed);
+			}
+		}
+#endif
+		
 		com_frameTime = com_ticNumber * USERCMD_MSEC;
 #ifdef _RAVEN //karin: Q4D 2025 clear debug
 		if(session->rw)
@@ -2806,7 +2898,17 @@ void idCommonLocal::Frame(void)
 		}
 #endif
 
-		idAsyncNetwork::RunFrame();
+		{
+			const int start = Sys_Milliseconds();
+
+			idAsyncNetwork::RunFrame();
+
+			const int elapsed = Sys_Milliseconds() - start;
+
+			if (elapsed > 20) {
+				Printf("FRAME BLOCK AsyncNetwork %d ms\n", elapsed);
+			}
+		}
 
 		if (idAsyncNetwork::IsActive()) {
 			if (idAsyncNetwork::serverDedicated.GetInteger() != 1) {
@@ -2814,10 +2916,30 @@ void idCommonLocal::Frame(void)
 				session->UpdateScreen(false);
 			}
 		} else {
-			session->Frame();
+			{
+				const int start = Sys_Milliseconds();
+
+				session->Frame();
+
+				const int elapsed = Sys_Milliseconds() - start;
+
+				if (elapsed > 20) {
+					Printf("FRAME BLOCK SessionFrame %d ms\n", elapsed);
+				}
+			}
 
 			// normal, in-sequence screen update
-			session->UpdateScreen(false);
+			{
+				const int start = Sys_Milliseconds();
+
+				session->UpdateScreen(false);
+
+				const int elapsed = Sys_Milliseconds() - start;
+
+				if (elapsed > 20) {
+					Printf("FRAME BLOCK UpdateScreen %d ms\n", elapsed);
+				}
+			}
 		}
 
 		// report timing information
@@ -2840,6 +2962,12 @@ void idCommonLocal::Frame(void)
 		if (!Sys_FPU_StackIsEmpty()) {
 			Printf("%s", Sys_FPU_GetState());
 			FatalError("idCommon::Frame: the FPU stack is not empty at the end of the frame\n");
+		}
+
+		const int commonFrameElapsed = Sys_Milliseconds() - commonFrameStart;
+
+		if (commonFrameElapsed > 20) {
+			Printf("FRAME BLOCK CommonFrameTotal %d ms\n", commonFrameElapsed);
 		}
 	}
 
