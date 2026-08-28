@@ -1963,6 +1963,7 @@ typedef struct shaderProgram_s {
 	GLint		aoThickness;
 	GLint		aoNormalReject;
 	GLint		aoSamples;
+	GLint		gtaoDirections;
 	GLint		u_fragmentMap[MAX_FRAGMENT_IMAGES];
 	//k: cubemap texture units
 	GLint		u_fragmentCubeMap[MAX_FRAGMENT_IMAGES];

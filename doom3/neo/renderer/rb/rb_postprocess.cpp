@@ -207,6 +207,13 @@ idCVar r_gtaoDebugHistory(
     "Debug GTAO history framebuffer"
 );
 
+idCVar r_gtaoDirections(
+    "r_gtaoDirections",
+    "8",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER,
+    "Number of GTAO horizon directions"
+);
+
 enum HDRLutPreset
 {
     HDRLUT_TRUE_NEUTRAL_FILM,
@@ -2069,6 +2076,11 @@ static void RB_SSGI()
     GL_Uniform1f(
         SHADER_PARM_ADDR(aoSamples),
         r_aoSamples.GetFloat()
+    );
+
+    GL_Uniform1i(
+        SHADER_PARM_ADDR(gtaoDirections),
+        r_gtaoDirections.GetInteger()
     );
 
     float projectionParms[4];

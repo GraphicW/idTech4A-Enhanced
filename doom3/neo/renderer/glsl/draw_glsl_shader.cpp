@@ -487,6 +487,7 @@ static void RB_GLSL_GetUniformLocations(shaderProgram_t *shader)
 	shader->aoThickness = GL_GetUniformLocation(shader->program, "u_aoThickness");
 	shader->aoNormalReject = GL_GetUniformLocation(shader->program, "u_aoNormalReject");
 	shader->aoSamples = GL_GetUniformLocation(shader->program, "u_aoSamples");
+	shader->gtaoDirections = GL_GetUniformLocation(shader->program,	"u_gtaoDirections");
 	shader->modelViewProjectionMatrix = GL_GetUniformLocation(shader->program, "u_modelViewProjectionMatrix");
 
 	shader->modelMatrix = GL_GetUniformLocation(shader->program, "u_modelMatrix");
