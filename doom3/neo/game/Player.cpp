@@ -1544,6 +1544,8 @@ void idPlayer::Spawn(void)
 	idStr		temp;
 	idBounds	bounds;
 
+	dynamicDamageScale = g_damageScale.GetFloat();
+
 	if (entityNumber >= MAX_CLIENTS) {
 		gameLocal.Error("entityNum > MAX_CLIENTS for player.  Player may only be spawned with a client.");
 	}
@@ -1734,10 +1736,10 @@ void idPlayer::Spawn(void)
 			}
 
 			if (g_useDynamicProtection.GetBool()) {
-				g_damageScale.SetFloat(1.0f);
+				dynamicDamageScale = g_damageScale.GetFloat();
 			}
 		} else {
-			g_damageScale.SetFloat(1.0f);
+			dynamicDamageScale = 1.0f;
 			g_armorProtection.SetFloat((g_skill.GetInteger() < 2) ? 0.4f : 0.2f);
 #ifndef ID_DEMO_BUILD
 
@@ -7076,7 +7078,7 @@ void idPlayer::Think(void)
 		// not done on clients for various reasons. don't do it on server and save the sound channel for other things
 		if (!gameLocal.isMultiplayer) {
 			SetCurrentHeartRate();
-			float scale = g_damageScale.GetFloat();
+			float scale = dynamicDamageScale;
 
 			if (g_useDynamicProtection.GetBool() && scale < 1.0f && gameLocal.time - lastDmgTime > 500) {
 				if (scale < 1.0f) {
@@ -7087,7 +7089,7 @@ void idPlayer::Think(void)
 					scale = 1.0f;
 				}
 
-				g_damageScale.SetFloat(scale);
+				dynamicDamageScale = scale;
 			}
 		}
 
@@ -7653,12 +7655,13 @@ void idPlayer::Damage(idEntity *inflictor, idEntity *attacker, const idVec3 &dir
 	if (damage > 0) {
 
 		if (!gameLocal.isMultiplayer) {
-			float scale = g_damageScale.GetFloat();
+
+			float scale = dynamicDamageScale;
 
 			if (g_useDynamicProtection.GetBool() && g_skill.GetInteger() < 2) {
 				if (gameLocal.time > lastDmgTime + 500 && scale > 0.25f) {
 					scale -= 0.05f;
-					g_damageScale.SetFloat(scale);
+					dynamicDamageScale = scale;
 				}
 			}
 
@@ -7666,7 +7669,7 @@ void idPlayer::Damage(idEntity *inflictor, idEntity *attacker, const idVec3 &dir
 				damage *= scale;
 			}
 		}
-
+		
 		if (damage < 1) {
 			damage = 1;
 		}

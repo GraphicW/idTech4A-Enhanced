@@ -280,6 +280,7 @@ class idPlayer : public idActor
 		int						deathClearContentsTime;
 		bool					doingDeathSkin;
 		int						lastArmorPulse;		// lastDmgTime if we had armor at time of hit
+		float					dynamicDamageScale; // scale damage and armor dynamically to keep the player alive more often
 		float					stamina;
 		float					healthPool;			// amount of health to give over time
 		int						nextHealthPulse;
