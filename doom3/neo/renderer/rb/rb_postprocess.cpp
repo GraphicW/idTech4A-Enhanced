@@ -2005,7 +2005,10 @@ static void RB_SSGI()
         return;
     }
 
-    if (globalImages->frameImage == NULL)
+    if (
+        globalImages->frameImage == NULL ||
+        globalImages->geometricNormalImage == NULL
+    )
     {
         return;
     }
@@ -2144,6 +2147,11 @@ static void RB_SSGI()
         SHADER_PARMS_ADDR(u_fragmentMap, 2),
         2
     );
+
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 3),
+        3
+    );
    
     float parm[4];
 
@@ -2240,13 +2248,16 @@ static void RB_SSGI()
         : globalImages->gtaoHistoryImageB;
     
     GL_SelectTexture(0);
-    globalImages->geometricNormalImage->Bind();
+    globalImages->frameImage->Bind();
 
     GL_SelectTexture(1);
     depthStencilRenderer.BindDepth();
 
     GL_SelectTexture(2);
     gtaoReadImage->Bind();
+
+    GL_SelectTexture(3);
+    globalImages->geometricNormalImage->Bind();
 
     GL_SelectTexture(0);
 
