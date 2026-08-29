@@ -2240,7 +2240,7 @@ static void RB_SSGI()
         : globalImages->gtaoHistoryImageB;
     
     GL_SelectTexture(0);
-    globalImages->frameImage->Bind();
+    globalImages->geometricNormalImage->Bind();
 
     GL_SelectTexture(1);
     depthStencilRenderer.BindDepth();

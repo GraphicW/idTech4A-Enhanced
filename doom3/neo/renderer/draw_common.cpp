@@ -463,6 +463,24 @@ static void RB_T_FillGeometricNormalBuffer(
 
 	const srfTriangles_t* tri = surf->geo;
 
+	const idMaterial* shader =
+		surf->material;
+
+	if (!shader->IsDrawn())
+	{
+		return;
+	}
+
+	if (!tri->numIndexes)
+	{
+		return;
+	}
+
+	if (shader->Coverage() == MC_TRANSLUCENT)
+	{
+		return;
+	}
+
 	idDrawVert* ac =
 		(idDrawVert*)vertexCache.Position(
 			tri->ambientCache
@@ -570,10 +588,41 @@ static void RB_STD_FillGeometricNormalBuffer(
 
 	geometricNormalFramebuffer->Bind();
 
-	/*
-	 * Temporary stub.
-	 * No rendering or state changes yet.
-	 */
+	qglClear(
+		GL_COLOR_BUFFER_BIT
+	);
+
+	GL_State(
+		GLS_DEPTHFUNC_EQUAL
+	);
+
+	GL_UseProgram(
+		&geometricNormalShader
+	);
+
+	GL_EnableVertexAttribArray(
+		SHADER_PARM_ADDR(attr_Vertex)
+	);
+
+	GL_EnableVertexAttribArray(
+		SHADER_PARM_ADDR(attr_Normal)
+	);
+
+	RB_RenderDrawSurfListGeometricNormals(
+		drawSurfs,
+		numDrawSurfs,
+		RB_T_FillGeometricNormalBuffer
+	);
+
+	GL_DisableVertexAttribArray(
+		SHADER_PARM_ADDR(attr_Vertex)
+	);
+
+	GL_DisableVertexAttribArray(
+		SHADER_PARM_ADDR(attr_Normal)
+	);
+
+	GL_UseProgram(NULL);
 
 	if (previousFramebuffer!= NULL)
 	{
