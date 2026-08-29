@@ -1640,6 +1640,8 @@ void RB_RenderTriangleSurface(const srfTriangles_t *tri);
 void RB_T_RenderTriangleSurface(const drawSurf_t *surf);
 void RB_RenderDrawSurfListWithFunction(drawSurf_t **drawSurfs, int numDrawSurfs,
                                        void (*triFunc_)(const drawSurf_t *));
+void RB_RenderDrawSurfListGeometricNormals(drawSurf_t** drawSurfs, int numDrawSurfs,
+										void (*triFunc_)(const drawSurf_t*));
 void RB_RenderDrawSurfChainWithFunction(const drawSurf_t *drawSurfs,
                                         void (*triFunc_)(const drawSurf_t *));
 void RB_DrawShaderPasses(drawSurf_t **drawSurfs, int numDrawSurfs);
@@ -1716,6 +1718,7 @@ typedef enum {
 	SHADER_SHADOW,
 	SHADER_DEFAULT,
 	SHADER_ZFILL,
+	SHADER_GEOMETRIC_NORMAL,
 	SHADER_ZFILLCLIP,
 	SHADER_ZFILLNOALPHATEST,
 	SHADER_CUBEMAP,
@@ -1964,6 +1967,7 @@ typedef struct shaderProgram_s {
 	GLint		aoNormalReject;
 	GLint		aoSamples;
 	GLint		gtaoDirections;
+	GLint		gtaoStrength;
 	GLint		u_fragmentMap[MAX_FRAGMENT_IMAGES];
 	//k: cubemap texture units
 	GLint		u_fragmentCubeMap[MAX_FRAGMENT_IMAGES];

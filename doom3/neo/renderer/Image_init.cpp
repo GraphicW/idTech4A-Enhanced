@@ -2507,6 +2507,7 @@ void idImageManager::Init()
 	hdrExposureImageB = NULL;
 	gtaoHistoryImageA = NULL;
 	gtaoHistoryImageB = NULL;
+	geometricNormalImage = NULL;
 #endif
 }
 

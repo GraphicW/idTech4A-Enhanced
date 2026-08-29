@@ -313,13 +313,16 @@ void RB_RenderDrawSurfListWithFunction(drawSurf_t **drawSurfs, int numDrawSurfs,
 	for (i = 0  ; i < numDrawSurfs ; i++) {
 		drawSurf = drawSurfs[i];
 
-		// change the matrix if needed
-		if (drawSurf->space != backEnd.currentSpace) {
+		if (drawSurf->space != backEnd.currentSpace)
+		{
 			RB_LoadProjectionMatrix();
 
-			// we need the model matrix without it being combined with the view matrix
-			// so we can transform local vectors to global coordinates
-			GL_UniformMatrix4fv(offsetof(shaderProgram_t, modelMatrix), drawSurf->space->modelMatrix);
+			// We need the model matrix without it being combined with the
+			// view matrix so we can transform local vectors to global coordinates.
+			GL_UniformMatrix4fv(
+				offsetof(shaderProgram_t, modelMatrix),
+				drawSurf->space->modelMatrix
+			);
 		}
 
 		bool weaponDepthHack = (drawSurf->space != nullptr) ? drawSurf->space->weaponDepthHack : false;
@@ -352,6 +355,100 @@ void RB_RenderDrawSurfListWithFunction(drawSurf_t **drawSurfs, int numDrawSurfs,
 	}
 
 	backEnd.currentSpace = NULL; //k2023
+}
+
+/*
+====================
+RB_RenderDrawSurfListGeometricNormals
+
+Draw-surface traversal for the geometric normal prepass.
+Uploads both the standard MVP and the local-to-view matrix.
+====================
+*/
+void RB_RenderDrawSurfListGeometricNormals(
+	drawSurf_t** drawSurfs,
+	int numDrawSurfs,
+	void (*triFunc_)(const drawSurf_t*)
+)
+{
+	int i;
+	const drawSurf_t* drawSurf;
+
+	backEnd.currentSpace = NULL;
+
+	for (i = 0; i < numDrawSurfs; i++)
+	{
+		drawSurf = drawSurfs[i];
+
+		if (drawSurf == NULL ||
+			drawSurf->space == NULL ||
+			drawSurf->geo == NULL)
+		{
+			continue;
+		}
+
+		if (drawSurf->space != backEnd.currentSpace)
+		{
+			RB_LoadProjectionMatrix();
+
+			GL_UniformMatrix4fv(
+				offsetof(shaderProgram_t, modelMatrix),
+				drawSurf->space->modelMatrix
+			);
+
+			GL_UniformMatrix4fv(
+				offsetof(shaderProgram_t, modelViewMatrix),
+				drawSurf->space->modelViewMatrix
+			);
+		}
+
+		const bool weaponDepthHack =
+			drawSurf->space->weaponDepthHack;
+
+		if (weaponDepthHack)
+		{
+			RB_EnterWeaponDepthHack();
+		}
+
+		if (drawSurf->space->modelDepthHack != 0.0f)
+		{
+			RB_EnterModelDepthHack(drawSurf);
+		}
+
+		RB_SetupDrawSurfMVP(drawSurf);
+
+		if (r_useScissor.GetBool() &&
+			!backEnd.currentScissor.Equals(drawSurf->scissorRect))
+		{
+			backEnd.currentScissor = drawSurf->scissorRect;
+
+			qglScissor(
+				backEnd.viewDef->viewport.x1 +
+				backEnd.currentScissor.x1,
+
+				backEnd.viewDef->viewport.y1 +
+				backEnd.currentScissor.y1,
+
+				backEnd.currentScissor.x2 + 1 -
+				backEnd.currentScissor.x1,
+
+				backEnd.currentScissor.y2 + 1 -
+				backEnd.currentScissor.y1
+			);
+		}
+
+		triFunc_(drawSurf);
+
+		if (weaponDepthHack ||
+			drawSurf->space->modelDepthHack != 0.0f)
+		{
+			RB_LeaveDepthHack();
+		}
+
+		backEnd.currentSpace = drawSurf->space;
+	}
+
+	backEnd.currentSpace = NULL;
 }
 
 /*

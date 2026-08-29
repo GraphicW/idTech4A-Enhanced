@@ -36,6 +36,9 @@
 #include "doom3/zfill.vert.h"
 #include "doom3/zfill.frag.h"
 
+#include "doom3/geometricNormal.vert.h"
+#include "doom3/geometricNormal.frag.h"
+
 #include "doom3/cubemap.vert.h"
 #include "doom3/cubemap.frag.h"
 

@@ -30,6 +30,7 @@ public:
     void AttachDepthBuffer();
     void AttachDepthStencilBuffer();
     void AttachStencilBuffer();
+    void AttachExternalDepthStencilBuffer(uint32_t buffer);
 
     void AttachImage2D(int target, const idImage* image, int index = 0);
     void AttachImageDepth(const idImage* image);
@@ -83,6 +84,7 @@ extern idFramebuffer* hdrLuminanceFramebufferD;
 extern idFramebuffer* hdrLuminanceFramebufferE;
 extern idFramebuffer* hdrExposureFramebufferA;
 extern idFramebuffer* hdrExposureFramebufferB;
+extern idFramebuffer* geometricNormalFramebuffer;
 extern idFramebuffer* gtaoFramebufferA;
 extern idFramebuffer* gtaoFramebufferB;
 #endif

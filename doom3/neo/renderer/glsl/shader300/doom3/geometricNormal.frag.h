@@ -1,0 +1,20 @@
+// geometric view-space normal buffer
+GLSL_SHADER const char ES3_GEOMETRIC_NORMAL_FRAG[] =
+"#version 300 es\n"
+"\n"
+"precision highp float;\n"
+"\n"
+"in highp vec3 var_ViewNormal;\n"
+"\n"
+"out vec4 _gl_FragColor;\n"
+"\n"
+"void main(void)\n"
+"{\n"
+"    vec3 viewNormal = normalize(var_ViewNormal);\n"
+"\n"
+"    _gl_FragColor = vec4(\n"
+"        viewNormal * 0.5 + 0.5,\n"
+"        1.0\n"
+"    );\n"
+"}\n"
+;

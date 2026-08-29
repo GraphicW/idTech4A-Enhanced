@@ -608,6 +608,7 @@ class idImageManager
 		idImage* hdrExposureImageB;
 		idImage* gtaoHistoryImageA;
 		idImage* gtaoHistoryImageB;
+		idImage* geometricNormalImage;
 #endif
 
 };

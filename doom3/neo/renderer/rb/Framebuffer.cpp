@@ -72,6 +72,7 @@ idFramebuffer* hdrLuminanceFramebufferD = NULL;
 idFramebuffer* hdrLuminanceFramebufferE = NULL;
 idFramebuffer* hdrExposureFramebufferA = NULL;
 idFramebuffer* hdrExposureFramebufferB = NULL;
+idFramebuffer* geometricNormalFramebuffer = NULL;
 idFramebuffer* gtaoFramebufferA = NULL;
 idFramebuffer* gtaoFramebufferB = NULL;
 
@@ -258,6 +259,20 @@ void idFramebuffer::AttachDepthBuffer( void )
 void idFramebuffer::AttachDepthStencilBuffer( void )
 {
 	qglFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthBuffer );
+}
+
+void idFramebuffer::AttachExternalDepthStencilBuffer(
+	uint32_t buffer
+)
+{
+	qglFramebufferRenderbuffer(
+		GL_FRAMEBUFFER,
+		GL_DEPTH_STENCIL_ATTACHMENT,
+		GL_RENDERBUFFER,
+		buffer
+	);
+
+	GL_CheckErrors();
 }
 
 void idFramebuffer::AttachStencilBuffer( void )
@@ -554,6 +569,18 @@ void Framebuffer::Init()
 		TR_CLAMP
 	);
 
+	if (globalImages->geometricNormalImage == NULL)
+	{
+		globalImages->geometricNormalImage = new idImage;
+	}
+
+	globalImages->geometricNormalImage->GenerateHDRImage(
+		glConfig.vidWidth,
+		glConfig.vidHeight,
+		TF_NEAREST,
+		TR_CLAMP
+	);
+
 	hdrSceneFramebuffer = Framebuffer::Alloc(
 		"_hdrSceneFramebuffer",
 		glConfig.vidWidth,
@@ -565,6 +592,26 @@ void Framebuffer::Init()
 	hdrSceneFramebuffer->AddDepthStencilBuffer(GL_DEPTH24_STENCIL8);
 	hdrSceneFramebuffer->Check();
 	hdrSceneFramebuffer->Unbind();
+
+	geometricNormalFramebuffer = Framebuffer::Alloc(
+		"_geometricNormalFramebuffer",
+		glConfig.vidWidth,
+		glConfig.vidHeight
+	);
+
+	geometricNormalFramebuffer->Bind();
+
+	geometricNormalFramebuffer->AttachImage2D(
+		globalImages->geometricNormalImage
+	);
+
+	geometricNormalFramebuffer->AttachExternalDepthStencilBuffer(
+		hdrSceneFramebuffer->depthBuffer
+	);
+
+	geometricNormalFramebuffer->Check();
+
+	geometricNormalFramebuffer->Unbind();
 
 	gtaoFramebufferA = Framebuffer::Alloc(
 		"_gtaoFramebufferA",
@@ -894,6 +941,7 @@ void Framebuffer::Shutdown()
 
 #ifdef _POSTPROCESS
 	hdrSceneFramebuffer = NULL;
+	geometricNormalFramebuffer = NULL;
 	mirrorFramebuffer = NULL;
 	hdrBloomFramebufferA = NULL;
 	hdrBloomFramebufferB = NULL;

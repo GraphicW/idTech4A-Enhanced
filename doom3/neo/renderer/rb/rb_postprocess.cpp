@@ -153,7 +153,7 @@ idCVar r_hdrCASStrength(
 
 idCVar r_ssgi(
     "r_ssgi",
-    "0",
+    "1",
     CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL,
     "Enable SSGI"
 );
@@ -198,6 +198,20 @@ idCVar r_aoSamples(
     "8",
     CVAR_RENDERER | CVAR_ARCHIVE,
     "AO sample count"
+);
+
+idCVar r_gtao(
+    "r_gtao",
+    "1",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL,
+    "Enable GTAO"
+);
+
+idCVar r_gtaoStrength(
+    "r_gtaoStrength",
+    "0.20",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "GTAO intensity"
 );
 
 idCVar r_gtaoDebugHistory(
@@ -1981,6 +1995,11 @@ static void RB_SSGI()
         return;
     }
 
+    if (!r_gtao.GetBool())
+    {
+        return;
+    }
+
     if (backEnd.viewDef == NULL)
     {
         return;
@@ -2083,6 +2102,15 @@ static void RB_SSGI()
         r_gtaoDirections.GetInteger()
     );
 
+    GL_Uniform1f(
+        SHADER_PARM_ADDR(gtaoStrength),
+        idMath::ClampFloat(
+            0.0f,
+            1.0f,
+            r_gtaoStrength.GetFloat()
+        )
+    );
+
     float projectionParms[4];
 
     projectionParms[0] =
@@ -2168,6 +2196,32 @@ static void RB_SSGI()
         0.0f, tch,
         tcw,  tch
     };
+
+    GL_EnableVertexAttribArray(
+        SHADER_PARM_ADDR(attr_Vertex)
+    );
+
+    GL_EnableVertexAttribArray(
+        SHADER_PARM_ADDR(attr_TexCoord)
+    );
+
+    GL_VertexAttribPointer(
+        offsetof(shaderProgram_t, attr_Vertex),
+        2,
+        GL_FLOAT,
+        false,
+        0,
+        vertices
+    );
+
+    GL_VertexAttribPointer(
+        offsetof(shaderProgram_t, attr_TexCoord),
+        2,
+        GL_FLOAT,
+        false,
+        0,
+        texCoords
+    );
 
     static bool gtaoWriteA = true;
     static bool gtaoHistoryValid = false;
@@ -2262,38 +2316,6 @@ static void RB_SSGI()
 
     gtaoHistoryValid = true;
     gtaoWriteA = !gtaoWriteA;
-
-     GL_EnableVertexAttribArray(
-        SHADER_PARM_ADDR(attr_Vertex)
-    );
-
-    GL_EnableVertexAttribArray(
-        SHADER_PARM_ADDR(attr_TexCoord)
-    );
-
-    GL_VertexAttribPointer(
-        offsetof(shaderProgram_t, attr_Vertex),
-        2,
-        GL_FLOAT,
-        false,
-        0,
-        vertices
-    );
-
-    GL_VertexAttribPointer(
-        offsetof(shaderProgram_t, attr_TexCoord),
-        2,
-        GL_FLOAT,
-        false,
-        0,
-        texCoords
-    );
-
-    qglDrawArrays(
-        GL_TRIANGLE_STRIP,
-        0,
-        4
-    );
 
     globalImages->BindNull();
 

@@ -203,6 +203,7 @@ static void RB_GLSL_GetShaderSources(idList<GLSLShaderProp> &ret)
 	ret.Append(GLSL_SHADER_SOURCE("zfill", SHADER_ZFILL, &depthFillShader, ZFILL_VERT, ZFILL_FRAG, "", ""));
 	ret.Append(GLSL_SHADER_SOURCE("zfillClip", SHADER_ZFILLCLIP, &depthFillClipShader, ZFILLCLIP_VERT, ZFILLCLIP_FRAG, "", ""));
 	ret.Append(GLSL_SHADER_SOURCE("zfillNoAlphaTest", SHADER_ZFILLNOALPHATEST, &depthFillNoAlphaTestShader, ZFILL_VERT, ZFILL_FRAG, "NO_ALPHA_TEST", "NO_ALPHA_TEST"));
+	ret.Append(GLSL_SHADER_SOURCE("geometricNormal", SHADER_GEOMETRIC_NORMAL, &geometricNormalShader, GEOMETRIC_NORMAL_VERT, GEOMETRIC_NORMAL_FRAG,	"",	""));
 	ret.Append(GLSL_SHADER_SOURCE("cubemap", SHADER_CUBEMAP, &cubemapShader, CUBEMAP_VERT, CUBEMAP_FRAG, "", ""));
 	ret.Append(GLSL_SHADER_SOURCE("environment", SHADER_ENVIRONMENT, &environmentShader, ENVIRONMENT_VERT, ENVIRONMENT_FRAG, "", ""));
     ret.Append(GLSL_SHADER_SOURCE("bumpyEnvironment", SHADER_BUMPY_ENVIRONMENT, &bumpyEnvironmentShader, BUMPY_ENVIRONMENT_VERT, BUMPY_ENVIRONMENT_FRAG, "", ""));
@@ -488,6 +489,7 @@ static void RB_GLSL_GetUniformLocations(shaderProgram_t *shader)
 	shader->aoNormalReject = GL_GetUniformLocation(shader->program, "u_aoNormalReject");
 	shader->aoSamples = GL_GetUniformLocation(shader->program, "u_aoSamples");
 	shader->gtaoDirections = GL_GetUniformLocation(shader->program,	"u_gtaoDirections");
+	shader->gtaoStrength = GL_GetUniformLocation(shader->program, "u_gtaoStrength");
 	shader->modelViewProjectionMatrix = GL_GetUniformLocation(shader->program, "u_modelViewProjectionMatrix");
 
 	shader->modelMatrix = GL_GetUniformLocation(shader->program, "u_modelMatrix");

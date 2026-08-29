@@ -450,6 +450,45 @@ void RB_T_FillDepthBuffer(const drawSurf_t *surf)
 	}
 }
 
+static void RB_T_FillGeometricNormalBuffer(
+	const drawSurf_t* surf
+)
+{
+	if (surf == NULL ||
+		surf->geo == NULL ||
+		surf->geo->ambientCache == NULL)
+	{
+		return;
+	}
+
+	const srfTriangles_t* tri = surf->geo;
+
+	idDrawVert* ac =
+		(idDrawVert*)vertexCache.Position(
+			tri->ambientCache
+		);
+
+	GL_VertexAttribPointer(
+		SHADER_PARM_ADDR(attr_Vertex),
+		3,
+		GL_FLOAT,
+		false,
+		sizeof(idDrawVert),
+		ac->xyz.ToFloatPtr()
+	);
+
+	GL_VertexAttribPointer(
+		SHADER_PARM_ADDR(attr_Normal),
+		3,
+		GL_FLOAT,
+		false,
+		sizeof(idDrawVert),
+		ac->normal.ToFloatPtr()
+	);
+
+	RB_DrawElementsWithCounters(tri);
+}
+
 /*
 =====================
 RB_STD_FillDepthBuffer
@@ -513,6 +552,39 @@ void RB_STD_FillDepthBuffer(drawSurf_t **drawSurfs, int numDrawSurfs)
 
 	GL_UseProgram(NULL);
 	qglEnable(GL_BLEND); //dante: add
+}
+
+static void RB_STD_FillGeometricNormalBuffer(
+	drawSurf_t** drawSurfs,
+	int numDrawSurfs
+)
+{
+	if (!backEnd.viewDef->viewEntitys ||
+		geometricNormalFramebuffer == NULL)
+	{
+		return;
+	}
+
+	idFramebuffer* previousFramebuffer =
+		backEnd.glState.currentFramebuffer;
+
+	geometricNormalFramebuffer->Bind();
+
+	/*
+	 * Temporary stub.
+	 * No rendering or state changes yet.
+	 */
+
+	if (previousFramebuffer!= NULL)
+	{
+		previousFramebuffer->Bind();
+		
+	}
+	else
+	{
+		Framebuffer::BindNull();
+		
+	}
 }
 
 /*
@@ -2619,6 +2691,11 @@ void	RB_STD_DrawView(void)
 	// fill the depth buffer and clear color buffer to black except on
 	// subviews
 	RB_STD_FillDepthBuffer(drawSurfs, numDrawSurfs);
+
+	RB_STD_FillGeometricNormalBuffer(
+		drawSurfs,
+		numDrawSurfs
+	 );
 
 #ifdef _SPLASHDAMAGE //karin: render occlusion testing
 	RB_OcclusionTesting();
