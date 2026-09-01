@@ -609,6 +609,9 @@ class idImageManager
 		idImage* gtaoHistoryImageA;
 		idImage* gtaoHistoryImageB;
 		idImage* geometricNormalImage;
+		idImage* ssgiRadianceImage;
+		idImage* ssgiRadianceImageA;
+		idImage* ssgiRadianceImageB;
 #endif
 
 };

@@ -9,6 +9,7 @@
 #include "postprocess/hdr_tonemap.frag.h"
 #include "postprocess/hdr_cas.frag.h"
 #include "postprocess/ssgi.frag.h"
+#include "postprocess/ssgi_trace.frag.h"
 
 #include "doom3/BPR.inc.h"
 

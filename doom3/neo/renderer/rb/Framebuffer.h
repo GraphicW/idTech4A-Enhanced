@@ -85,6 +85,9 @@ extern idFramebuffer* hdrLuminanceFramebufferE;
 extern idFramebuffer* hdrExposureFramebufferA;
 extern idFramebuffer* hdrExposureFramebufferB;
 extern idFramebuffer* geometricNormalFramebuffer;
+extern idFramebuffer* ssgiRadianceFramebuffer;
+extern idFramebuffer* ssgiRadianceFramebufferA;
+extern idFramebuffer* ssgiRadianceFramebufferB;
 extern idFramebuffer* gtaoFramebufferA;
 extern idFramebuffer* gtaoFramebufferB;
 #endif

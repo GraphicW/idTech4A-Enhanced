@@ -45,7 +45,7 @@ GLSL_PROGRAM_PROC shaderProgram_t hdrLuminanceShader;  // HDR luminance extracti
 GLSL_PROGRAM_PROC shaderProgram_t hdrExposureShader;  // HDR exposure calculation
 GLSL_PROGRAM_PROC shaderProgram_t hdrCASShader;  // HDR contrast adaptive sharpening
 GLSL_PROGRAM_PROC shaderProgram_t ssgiShader;  // SSGI postprocess shader
-
+GLSL_PROGRAM_PROC shaderProgram_t ssgiTraceShader; 
 #endif
 
 // new stage

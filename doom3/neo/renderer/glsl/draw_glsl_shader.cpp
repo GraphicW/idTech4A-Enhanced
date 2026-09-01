@@ -317,7 +317,7 @@ static void RB_GLSL_GetShaderSources(idList<GLSLShaderProp> &ret)
 	ret.Append(GLSL_SHADER_SOURCE("hdr_tonemap", SHADER_HDR_TONEMAP, &hdrTonemapShader,	RETRO_POSTPROCESS_2D_VERT, HDR_TONEMAP_FRAG, "", ""));
 	ret.Append(GLSL_SHADER_SOURCE("hdr_cas", SHADER_HDR_CAS, &hdrCASShader,	RETRO_POSTPROCESS_2D_VERT, HDR_CAS_FRAG, "", ""));
 	ret.Append(GLSL_SHADER_SOURCE("ssgi", SHADER_SSGI, &ssgiShader,	RETRO_POSTPROCESS_2D_VERT, SSGI_FRAG, "", ""));
-		
+	ret.Append(GLSL_SHADER_SOURCE("ssgiTrace", SHADER_SSGI_TRACE, &ssgiTraceShader, RETRO_POSTPROCESS_2D_VERT,	SSGI_TRACE_FRAG, "", ""));
 #endif
 }
 

@@ -73,6 +73,9 @@ idFramebuffer* hdrLuminanceFramebufferE = NULL;
 idFramebuffer* hdrExposureFramebufferA = NULL;
 idFramebuffer* hdrExposureFramebufferB = NULL;
 idFramebuffer* geometricNormalFramebuffer = NULL;
+idFramebuffer* ssgiRadianceFramebuffer = NULL;
+idFramebuffer* ssgiRadianceFramebufferA = NULL;
+idFramebuffer* ssgiRadianceFramebufferB = NULL;
 idFramebuffer* gtaoFramebufferA = NULL;
 idFramebuffer* gtaoFramebufferB = NULL;
 
@@ -581,6 +584,18 @@ void Framebuffer::Init()
 		TR_CLAMP
 	);
 
+	if (globalImages->ssgiRadianceImage == NULL)
+	{
+		globalImages->ssgiRadianceImage = new idImage;
+	}
+
+	globalImages->ssgiRadianceImage->GenerateHDRImage(
+		glConfig.vidWidth,
+		glConfig.vidHeight,
+		TF_LINEAR,
+		TR_CLAMP
+	);
+
 	hdrSceneFramebuffer = Framebuffer::Alloc(
 		"_hdrSceneFramebuffer",
 		glConfig.vidWidth,
@@ -612,6 +627,22 @@ void Framebuffer::Init()
 	geometricNormalFramebuffer->Check();
 
 	geometricNormalFramebuffer->Unbind();
+
+	ssgiRadianceFramebuffer = Framebuffer::Alloc(
+		"_ssgiRadianceFramebuffer",
+		glConfig.vidWidth,
+		glConfig.vidHeight
+	);
+
+	ssgiRadianceFramebuffer->Bind();
+
+	ssgiRadianceFramebuffer->AttachImage2D(
+		globalImages->ssgiRadianceImage
+	);
+
+	ssgiRadianceFramebuffer->Check();
+
+	ssgiRadianceFramebuffer->Unbind();
 
 	gtaoFramebufferA = Framebuffer::Alloc(
 		"_gtaoFramebufferA",
@@ -942,6 +973,9 @@ void Framebuffer::Shutdown()
 #ifdef _POSTPROCESS
 	hdrSceneFramebuffer = NULL;
 	geometricNormalFramebuffer = NULL;
+	ssgiRadianceFramebuffer = NULL;
+	ssgiRadianceFramebufferA = NULL;
+	ssgiRadianceFramebufferB = NULL;
 	mirrorFramebuffer = NULL;
 	hdrBloomFramebufferA = NULL;
 	hdrBloomFramebufferB = NULL;

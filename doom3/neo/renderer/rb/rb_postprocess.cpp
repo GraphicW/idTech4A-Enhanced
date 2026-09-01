@@ -1988,6 +1988,236 @@ static void RB_HDR_CAS()
     }
 }
 
+static void RB_SSGITrace()
+{
+    if (
+        ssgiRadianceFramebuffer == NULL ||
+        globalImages->ssgiRadianceImage == NULL ||
+        globalImages->hdrSceneImage == NULL ||
+        globalImages->geometricNormalImage == NULL ||
+        backEnd.viewDef == NULL
+        )
+    {
+        return;
+    }
+
+    GLboolean depthMask;
+    GLint bufferId;
+
+    qglGetBooleanv(
+        GL_DEPTH_WRITEMASK,
+        &depthMask
+    );
+
+    qglGetIntegerv(
+        GL_ARRAY_BUFFER_BINDING,
+        &bufferId
+    );
+
+    const GLboolean blendEnabled =
+        qglIsEnabled(GL_BLEND);
+
+    const GLboolean depthEnabled =
+        qglIsEnabled(GL_DEPTH_TEST);
+
+    if (blendEnabled)
+    {
+        qglDisable(GL_BLEND);
+    }
+
+    if (depthEnabled)
+    {
+        qglDisable(GL_DEPTH_TEST);
+    }
+
+    if (depthMask)
+    {
+        qglDepthMask(GL_FALSE);
+    }
+
+    /*
+    Client-side vertex arrays are used below.
+
+    GL_ARRAY_BUFFER must therefore be zero while
+    GL_VertexAttribPointer receives CPU addresses.
+    */
+    if (bufferId != 0)
+    {
+        qglBindBuffer(
+            GL_ARRAY_BUFFER,
+            0
+        );
+    }
+
+    ssgiRadianceFramebuffer->Bind();
+
+    qglViewport(
+        0,
+        0,
+        glConfig.vidWidth,
+        glConfig.vidHeight
+    );
+
+    qglScissor(
+        0,
+        0,
+        glConfig.vidWidth,
+        glConfig.vidHeight
+    );
+
+    GL_UseProgram(
+        &ssgiTraceShader
+    );
+
+    GL_SelectTexture(0);
+    globalImages->hdrSceneImage->Bind();
+
+    GL_SelectTexture(1);
+    depthStencilRenderer.BindDepth();
+
+    GL_SelectTexture(2);
+    globalImages->geometricNormalImage->Bind();
+
+    GL_SelectTexture(0);
+
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 0),
+        0
+    );
+
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 1),
+        1
+    );
+
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 2),
+        2
+    );
+
+    float projectionParms[4];
+
+    projectionParms[0] =
+        backEnd.viewDef->projectionMatrix[0];
+
+    projectionParms[1] =
+        backEnd.viewDef->projectionMatrix[5];
+
+    projectionParms[2] =
+        backEnd.viewDef->projectionMatrix[10];
+
+    projectionParms[3] =
+        backEnd.viewDef->projectionMatrix[14];
+
+    GL_Uniform4fv(
+        SHADER_PARM_ADDR(projectionParams),
+        projectionParms
+    );
+
+    float windowParms[4];
+
+    windowParms[0] =
+        1.0f / (float)glConfig.vidWidth;
+
+    windowParms[1] =
+        1.0f / (float)glConfig.vidHeight;
+
+    windowParms[2] = 0.0f;
+    windowParms[3] = 0.0f;
+
+    GL_Uniform4fv(
+        SHADER_PARM_ADDR(windowCoords),
+        windowParms);
+
+    static const float vertices[] =
+    {
+        -1.0f, -1.0f,
+         1.0f, -1.0f,
+        -1.0f,  1.0f,
+         1.0f,  1.0f
+    };
+
+    static const float texCoords[] =
+    {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f
+    };
+
+    GL_EnableVertexAttribArray(
+        SHADER_PARM_ADDR(attr_Vertex)
+    );
+
+    GL_EnableVertexAttribArray(
+        SHADER_PARM_ADDR(attr_TexCoord)
+    );
+
+    GL_VertexAttribPointer(
+        offsetof(shaderProgram_t, attr_Vertex),
+        2,
+        GL_FLOAT,
+        false,
+        0,
+        vertices
+    );
+
+    GL_VertexAttribPointer(
+        offsetof(shaderProgram_t, attr_TexCoord),
+        2,
+        GL_FLOAT,
+        false,
+        0,
+        texCoords
+    );
+
+    qglDrawArrays(
+        GL_TRIANGLE_STRIP,
+        0,
+        4
+    );
+
+    GL_DisableVertexAttribArray(
+        SHADER_PARM_ADDR(attr_Vertex)
+    );
+
+    GL_DisableVertexAttribArray(
+        SHADER_PARM_ADDR(attr_TexCoord)
+    );
+
+    globalImages->BindNull();
+
+    GL_UseProgram(NULL);
+
+    ssgiRadianceFramebuffer->Unbind();
+
+    /*
+    Restore state.
+    */
+    if (blendEnabled)
+    {
+        qglEnable(GL_BLEND);
+    }
+
+    if (depthEnabled)
+    {
+        qglEnable(GL_DEPTH_TEST);
+    }
+
+    if (depthMask)
+    {
+        qglDepthMask(GL_TRUE);
+    }
+
+    if (bufferId != 0)
+    {
+        qglBindBuffer(
+            GL_ARRAY_BUFFER,
+            bufferId
+        );
+    }
+}
+
 static void RB_SSGI()
 {
     if (!r_ao.GetBool())
@@ -2248,7 +2478,7 @@ static void RB_SSGI()
         : globalImages->gtaoHistoryImageB;
     
     GL_SelectTexture(0);
-    globalImages->frameImage->Bind();
+    globalImages->ssgiRadianceImage->Bind();
 
     GL_SelectTexture(1);
     depthStencilRenderer.BindDepth();
@@ -2366,11 +2596,10 @@ static void RB_SSGI()
 
 void RB_PP_Render(void)
 {
+    RB_SSGITrace();
     RB_HDR_BrightPass();
-
     RB_HDR_BlurHorizontal();
     RB_HDR_BlurVertical();
-
     RB_HDR_LuminancePass();
 
     RB_HDR_DownsamplePass(

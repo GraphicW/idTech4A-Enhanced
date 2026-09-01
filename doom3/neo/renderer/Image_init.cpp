@@ -2508,6 +2508,9 @@ void idImageManager::Init()
 	gtaoHistoryImageA = NULL;
 	gtaoHistoryImageB = NULL;
 	geometricNormalImage = NULL;
+	ssgiRadianceImage = NULL;
+	ssgiRadianceImageA = NULL;
+	ssgiRadianceImageB = NULL;
 #endif
 }
 
