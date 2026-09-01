@@ -1988,6 +1988,8 @@ static void RB_HDR_CAS()
     }
 }
 
+static idImage* ssgiCurrentRadianceImage = NULL;
+
 static void RB_SSGITrace()
 {
     if (
@@ -2000,6 +2002,24 @@ static void RB_SSGITrace()
     {
         return;
     }
+
+    static bool ssgiWriteA = true;
+    static bool ssgiHistoryValid = false;
+
+    idFramebuffer* ssgiWriteFramebuffer =
+        ssgiWriteA
+        ? ssgiRadianceFramebufferA
+        : ssgiRadianceFramebufferB;
+
+    idImage* ssgiReadImage =
+        ssgiWriteA
+        ? globalImages->ssgiRadianceImageB
+        : globalImages->ssgiRadianceImageA;
+
+    idImage* ssgiOutputImage =
+        ssgiWriteA
+        ? globalImages->ssgiRadianceImageA
+        : globalImages->ssgiRadianceImageB;
 
     GLboolean depthMask;
     GLint bufferId;
@@ -2049,7 +2069,7 @@ static void RB_SSGITrace()
         );
     }
 
-    ssgiRadianceFramebuffer->Bind();
+    ssgiWriteFramebuffer->Bind();
 
     qglViewport(
         0,
@@ -2078,6 +2098,9 @@ static void RB_SSGITrace()
     GL_SelectTexture(2);
     globalImages->geometricNormalImage->Bind();
 
+    GL_SelectTexture(3);
+    ssgiReadImage->Bind();
+
     GL_SelectTexture(0);
 
     GL_Uniform1i(
@@ -2093,6 +2116,11 @@ static void RB_SSGITrace()
     GL_Uniform1i(
         SHADER_PARMS_ADDR(u_fragmentMap, 2),
         2
+    );
+
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 3),
+        3
     );
 
     float projectionParms[4];
@@ -2189,7 +2217,7 @@ static void RB_SSGITrace()
 
     GL_UseProgram(NULL);
 
-    ssgiRadianceFramebuffer->Unbind();
+    ssgiWriteFramebuffer->Unbind();
 
     /*
     Restore state.
@@ -2216,6 +2244,12 @@ static void RB_SSGITrace()
             bufferId
         );
     }
+
+    ssgiCurrentRadianceImage =
+        ssgiOutputImage;
+
+    ssgiHistoryValid = true;
+    ssgiWriteA = !ssgiWriteA;
 }
 
 static void RB_SSGI()
@@ -2237,8 +2271,9 @@ static void RB_SSGI()
 
     if (
         globalImages->frameImage == NULL ||
-        globalImages->geometricNormalImage == NULL
-    )
+        globalImages->geometricNormalImage == NULL ||
+        ssgiCurrentRadianceImage == NULL
+        )
     {
         return;
     }
@@ -2478,7 +2513,7 @@ static void RB_SSGI()
         : globalImages->gtaoHistoryImageB;
     
     GL_SelectTexture(0);
-    globalImages->ssgiRadianceImage->Bind();
+    ssgiCurrentRadianceImage->Bind();
 
     GL_SelectTexture(1);
     depthStencilRenderer.BindDepth();

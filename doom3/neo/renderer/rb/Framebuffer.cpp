@@ -589,7 +589,31 @@ void Framebuffer::Init()
 		globalImages->ssgiRadianceImage = new idImage;
 	}
 
+	if (globalImages->ssgiRadianceImageA == NULL)
+	{
+		globalImages->ssgiRadianceImageA = new idImage;
+	}
+
+	if (globalImages->ssgiRadianceImageB == NULL)
+	{
+		globalImages->ssgiRadianceImageB = new idImage;
+	}
+
 	globalImages->ssgiRadianceImage->GenerateHDRImage(
+		glConfig.vidWidth,
+		glConfig.vidHeight,
+		TF_LINEAR,
+		TR_CLAMP
+	);
+
+	globalImages->ssgiRadianceImageA->GenerateHDRImage(
+		glConfig.vidWidth,
+		glConfig.vidHeight,
+		TF_LINEAR,
+		TR_CLAMP
+	);
+
+	globalImages->ssgiRadianceImageB->GenerateHDRImage(
 		glConfig.vidWidth,
 		glConfig.vidHeight,
 		TF_LINEAR,
@@ -643,6 +667,39 @@ void Framebuffer::Init()
 	ssgiRadianceFramebuffer->Check();
 
 	ssgiRadianceFramebuffer->Unbind();
+
+	ssgiRadianceFramebufferA = Framebuffer::Alloc(
+		"_ssgiRadianceFramebufferA",
+		glConfig.vidWidth,
+		glConfig.vidHeight
+	);
+
+	ssgiRadianceFramebufferA->Bind();
+
+	ssgiRadianceFramebufferA->AttachImage2D(
+		globalImages->ssgiRadianceImageA
+	);
+
+	ssgiRadianceFramebufferA->Check();
+
+	ssgiRadianceFramebufferA->Unbind();
+
+
+	ssgiRadianceFramebufferB = Framebuffer::Alloc(
+		"_ssgiRadianceFramebufferB",
+		glConfig.vidWidth,
+		glConfig.vidHeight
+	);
+
+	ssgiRadianceFramebufferB->Bind();
+
+	ssgiRadianceFramebufferB->AttachImage2D(
+		globalImages->ssgiRadianceImageB
+	);
+
+	ssgiRadianceFramebufferB->Check();
+
+	ssgiRadianceFramebufferB->Unbind();
 
 	gtaoFramebufferA = Framebuffer::Alloc(
 		"_gtaoFramebufferA",
