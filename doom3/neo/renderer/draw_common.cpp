@@ -588,12 +588,20 @@ static void RB_STD_FillGeometricNormalBuffer(
 
 	geometricNormalFramebuffer->Bind();
 
+	qglClearColor(
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f
+	);
+
 	qglClear(
 		GL_COLOR_BUFFER_BIT
 	);
 
 	GL_State(
-		GLS_DEPTHFUNC_EQUAL
+		GLS_DEPTHFUNC_EQUAL |
+		GLS_DEPTHMASK
 	);
 
 	GL_UseProgram(

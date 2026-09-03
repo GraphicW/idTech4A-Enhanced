@@ -1993,13 +1993,16 @@ static idImage* ssgiCurrentRadianceImage = NULL;
 static void RB_SSGITrace()
 {
     if (
-        ssgiRadianceFramebuffer == NULL ||
-        globalImages->ssgiRadianceImage == NULL ||
+        ssgiRadianceFramebufferA == NULL ||
+        ssgiRadianceFramebufferB == NULL ||
+        globalImages->ssgiRadianceImageA == NULL ||
+        globalImages->ssgiRadianceImageB == NULL ||
         globalImages->hdrSceneImage == NULL ||
         globalImages->geometricNormalImage == NULL ||
         backEnd.viewDef == NULL
         )
     {
+        ssgiCurrentRadianceImage = NULL;
         return;
     }
 
@@ -2123,6 +2126,24 @@ static void RB_SSGITrace()
         3
     );
 
+    GL_Uniform1i(
+        SHADER_PARM_ADDR(gtaoHistoryValid),
+        ssgiHistoryValid ? 1 : 0
+    );
+
+    float ssgiFrameParms[4] =
+    {
+        (float)(backEnd.frameCount & 15),
+        0.0f,
+        0.0f,
+        0.0f
+    };
+
+    GL_Uniform4fv(
+        SHADER_PARMS_ADDR(u_uniformParm, 0),
+        ssgiFrameParms
+    );
+
     float projectionParms[4];
 
     projectionParms[0] =
@@ -2156,6 +2177,24 @@ static void RB_SSGITrace()
     GL_Uniform4fv(
         SHADER_PARM_ADDR(windowCoords),
         windowParms);
+
+    float depthTextureParms[4];
+
+    depthTextureParms[0] =
+        (float)depthStencilRenderer.Width() /
+        (float)depthStencilRenderer.UploadWidth();
+
+    depthTextureParms[1] =
+        (float)depthStencilRenderer.Height() /
+        (float)depthStencilRenderer.UploadHeight();
+
+    depthTextureParms[2] = 0.0f;
+    depthTextureParms[3] = 0.0f;
+
+    GL_Uniform4fv(
+        SHADER_PARM_ADDR(nonPowerOfTwo),
+        depthTextureParms
+    );
 
     static const float vertices[] =
     {
