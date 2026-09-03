@@ -2456,6 +2456,11 @@ static void RB_SSGI()
         SHADER_PARMS_ADDR(u_fragmentMap, 3),
         3
     );
+
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 4),
+        4
+    );
    
     float parm[4];
 
@@ -2562,6 +2567,9 @@ static void RB_SSGI()
 
     GL_SelectTexture(3);
     globalImages->geometricNormalImage->Bind();
+
+    GL_SelectTexture(4);
+    globalImages->frameImage->Bind();
 
     GL_SelectTexture(0);
 
