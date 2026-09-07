@@ -396,9 +396,16 @@ void RB_RenderDrawSurfListGeometricNormals(
 				drawSurf->space->modelMatrix
 			);
 
+			float modelViewMatrix[16];
+
+			R_TransposeGLMatrix(
+				drawSurf->space->modelViewMatrix,
+				modelViewMatrix
+			);
+
 			GL_UniformMatrix4fv(
 				offsetof(shaderProgram_t, modelViewMatrix),
-				drawSurf->space->modelViewMatrix
+				modelViewMatrix
 			);
 		}
 

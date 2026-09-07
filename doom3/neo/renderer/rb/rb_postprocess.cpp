@@ -1990,6 +1990,12 @@ static void RB_HDR_CAS()
 
 static idImage* ssgiCurrentRadianceImage = NULL;
 
+static float ssgiPrevModelViewMatrix[16];
+static float ssgiPrevProjectionMatrix[16];
+static float ssgiPrevViewProjectionMatrix[16];
+
+static bool ssgiPrevMatricesValid = false;
+
 static void RB_SSGITrace()
 {
     if (
@@ -2092,6 +2098,52 @@ static void RB_SSGITrace()
         &ssgiTraceShader
     );
 
+    float currentViewProjection[16];
+
+    myGlMultMatrix(
+        backEnd.viewDef->worldSpace.modelViewMatrix,
+        backEnd.viewDef->projectionMatrix,
+        currentViewProjection
+    );
+
+    const bool canUseHistory =
+        ssgiHistoryValid &&
+        ssgiPrevMatricesValid;
+
+    static const float identityMatrix[16] =
+    {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    float currentViewToPreviousClip[16];
+
+    if (canUseHistory)
+    {
+        float inverseCurrentView[16];
+
+        R_MatrixFullInverse(
+            backEnd.viewDef->worldSpace.modelViewMatrix,
+            inverseCurrentView
+        );
+
+        myGlMultMatrix(
+            inverseCurrentView,
+            ssgiPrevViewProjectionMatrix,
+            currentViewToPreviousClip
+        );
+    }
+    else
+    {
+        memcpy(
+            currentViewToPreviousClip,
+            identityMatrix,
+            sizeof(currentViewToPreviousClip)
+        );
+    }
+
     GL_SelectTexture(0);
     globalImages->hdrSceneImage->Bind();
 
@@ -2126,9 +2178,14 @@ static void RB_SSGITrace()
         3
     );
 
+    GL_UniformMatrix4fv(
+        SHADER_PARM_ADDR(ssgiCurrentViewToPreviousClip),
+        currentViewToPreviousClip
+    );
+
     GL_Uniform1i(
         SHADER_PARM_ADDR(gtaoHistoryValid),
-        ssgiHistoryValid ? 1 : 0
+        canUseHistory ? 1 : 0
     );
 
     float ssgiFrameParms[4] =
@@ -2284,8 +2341,31 @@ static void RB_SSGITrace()
         );
     }
 
+    memcpy(
+        ssgiPrevModelViewMatrix,
+        backEnd.viewDef->worldSpace.modelViewMatrix,
+        sizeof(float) * 16
+    );
+
+    memcpy(
+        ssgiPrevProjectionMatrix,
+        backEnd.viewDef->projectionMatrix,
+        sizeof(float) * 16
+    );
+
+    memcpy(
+        ssgiPrevViewProjectionMatrix,
+        currentViewProjection,
+        sizeof(float) * 16
+    );
+
+    ssgiPrevMatricesValid = true;
+
+    // We point the "Current" image to the one we just READ from (the history).
+    // This prevents the GPU from trying to read and write to the same texture 
+    // in the same frame, which was causing the 1.5s stall.
     ssgiCurrentRadianceImage =
-        ssgiOutputImage;
+        ssgiReadImage;
 
     ssgiHistoryValid = true;
     ssgiWriteA = !ssgiWriteA;

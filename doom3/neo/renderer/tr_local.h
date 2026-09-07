@@ -1923,10 +1923,14 @@ typedef struct shaderProgram_s {
 	GLint		modelMatrix;
 	GLint		textureMatrix;
 	GLint		modelViewMatrix;
-	GLint		projectionMatrix;
-	GLint		projectionParams;
+	GLint       projectionMatrix;
+	GLint       projectionParams;
+
+	GLint       ssgiCurrentViewToPreviousClip;
+
 	GLint		gtaoPass;
 	GLint		gtaoHistoryValid;
+
 	GLint		clipPlane;
 	GLint		fogMatrix;
 	GLint		fogColor;

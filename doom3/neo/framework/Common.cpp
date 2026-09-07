@@ -2826,7 +2826,6 @@ idCommonLocal::Frame
 void idCommonLocal::Frame(void)
 {
 	try {
-		const int commonFrameStart = Sys_Milliseconds();
 		// pump all the events
 		{
 			const int start = Sys_Milliseconds();
@@ -2930,15 +2929,7 @@ void idCommonLocal::Frame(void)
 
 			// normal, in-sequence screen update
 			{
-				const int start = Sys_Milliseconds();
-
 				session->UpdateScreen(false);
-
-				const int elapsed = Sys_Milliseconds() - start;
-
-				if (elapsed > 20) {
-					Printf("FRAME BLOCK UpdateScreen %d ms\n", elapsed);
-				}
 			}
 		}
 
@@ -2962,12 +2953,6 @@ void idCommonLocal::Frame(void)
 		if (!Sys_FPU_StackIsEmpty()) {
 			Printf("%s", Sys_FPU_GetState());
 			FatalError("idCommon::Frame: the FPU stack is not empty at the end of the frame\n");
-		}
-
-		const int commonFrameElapsed = Sys_Milliseconds() - commonFrameStart;
-
-		if (commonFrameElapsed > 20) {
-			Printf("FRAME BLOCK CommonFrameTotal %d ms\n", commonFrameElapsed);
 		}
 	}
 

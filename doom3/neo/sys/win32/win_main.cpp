@@ -1277,18 +1277,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 #endif
-		// run the game
-		int frameStart = Sys_Milliseconds();
-
 		common->Frame();
-
-		int frameElapsed = Sys_Milliseconds() - frameStart;
-
-		if (frameElapsed > 20) {
-			common->Printf(
-				"FRAME HITCH %d ms\n",
-				frameElapsed);
-		}
 	}
 
 	// never gets here

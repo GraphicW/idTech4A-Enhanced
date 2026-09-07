@@ -466,10 +466,34 @@ static void RB_T_FillGeometricNormalBuffer(
 	const idMaterial* shader =
 		surf->material;
 
+	if (shader == NULL)
+	{
+		return;
+	}
+
 	if (!shader->IsDrawn())
 	{
 		return;
 	}
+
+	const texgen_t texgen =
+		shader->Texgen();
+
+	if (shader->IsPortalSky() ||
+		shader->GetSort() == SS_PORTAL_SKY ||
+		shader->GetSort() == SS_SUBVIEW ||
+		texgen == TG_SKYBOX_CUBE ||
+		texgen == TG_WOBBLESKY_CUBE)
+	{
+		return;
+	}
+
+#ifdef _RAVEN
+	if (shader->TestMaterialFlag(MF_SKY))
+	{
+		return;
+	}
+#endif
 
 	if (!tri->numIndexes)
 	{
@@ -577,7 +601,9 @@ static void RB_STD_FillGeometricNormalBuffer(
 	int numDrawSurfs
 )
 {
-	if (!backEnd.viewDef->viewEntitys ||
+	if (backEnd.viewDef == NULL ||
+		!backEnd.viewDef->viewEntitys ||
+		backEnd.viewDef->isSubview ||
 		geometricNormalFramebuffer == NULL)
 	{
 		return;
