@@ -54,6 +54,69 @@ idCVar r_hdrLutAuto(
     "Automatically select HDR LUT based on map"
 );
 
+idCVar r_hdrMultiLutEnable(
+    "r_hdrMultiLutEnable",
+    "0",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL,
+    "Enable four-slot HDR multi-LUT color grading"
+);
+
+idCVar r_lutFile1(
+    "r_lutFile1",
+    "LUTs/natural_realistic.cube",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "Multi-LUT slot 1 .cube file"
+);
+
+idCVar r_lutFile2(
+    "r_lutFile2",
+    "LUTs/true_neutral_film.cube",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "Multi-LUT slot 2 .cube file"
+);
+
+idCVar r_lutFile3(
+    "r_lutFile3",
+    "LUTs/color_accuracy.cube",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "Multi-LUT slot 3 .cube file"
+);
+
+idCVar r_lutFile4(
+    "r_lutFile4",
+    "LUTs/interior_lowlight.cube",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "Multi-LUT slot 4 .cube file"
+);
+
+idCVar r_lutBlend1(
+    "r_lutBlend1",
+    "0.48",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT,
+    "Multi-LUT slot 1 blend weight"
+);
+
+idCVar r_lutBlend2(
+    "r_lutBlend2",
+    "0.28",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT,
+    "Multi-LUT slot 2 blend weight"
+);
+
+idCVar r_lutBlend3(
+    "r_lutBlend3",
+    "0.18",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT,
+    "Multi-LUT slot 3 blend weight"
+);
+
+idCVar r_lutBlend4(
+    "r_lutBlend4",
+    "0.24",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT,
+    "Multi-LUT slot 4 blend weight"
+);
+
 idCVar r_hdrBloomEnable(
     "r_hdrBloomEnable",
     "1",
@@ -291,12 +354,18 @@ idCVar r_hdrLut(
     idCmdSystem::ArgCompletion_Integer<0, HDRLUT_COUNT - 1>
 );
 
-static GLuint hdrLutTexture = 0;
-static int hdrLutSize = 0;
-static idStr loadedHdrLutName;
+static const int HDR_MULTI_LUT_COUNT = 4;
 
-static float hdrCurrentExposure = 1.25f;
-static float hdrTargetExposure = 1.25f;
+typedef struct hdrLutSlot_s
+{
+    GLuint texture;
+    int size;
+    idStr loadedPath;
+    bool valid;
+} hdrLutSlot_t;
+
+// Slot zero is also used by the legacy single-LUT path.
+static hdrLutSlot_t hdrLutSlots[HDR_MULTI_LUT_COUNT] = {};
 
 static bool hdrExposureWriteToB = true;
 static bool hdrExposureResultIsB = false;
@@ -325,25 +394,23 @@ static float RB_HDR_CalculateLuminance(
         b * 0.0722f;
 }
 
-static float RB_HDR_SampleSceneLuminance()
+static bool RB_LoadHDRLutCube(
+    hdrLutSlot_t& slot,
+    const char* lutPath)
 {
-    return 1.0f;
-}
-
-static bool RB_LoadHDRLutCube(const char* lutName)
-{
-    if (!lutName || !lutName[0]) {
+    if (!lutPath || !lutPath[0]) {
         return false;
     }
 
-    if (loadedHdrLutName.Icmp(lutName) == 0 && hdrLutTexture != 0) {
+    if (slot.loadedPath.Icmp(lutPath) == 0 &&
+        slot.texture != 0 &&
+        slot.valid) {
         return true;
     }
 
-    idStr path;
-    path = "LUTs/";
-    path += lutName;
-    path += ".cube";
+    slot.valid = false;
+
+    idStr path = lutPath;
 
     void* fileBuffer = NULL;
     int fileLength = fileSystem->ReadFile(path.c_str(), &fileBuffer, NULL);
@@ -439,8 +506,11 @@ static bool RB_LoadHDRLutCube(const char* lutName)
 
     const int voxelCount = lutSize * lutSize * lutSize;
 
-    idList<byte> lutBytes;
-    lutBytes.SetNum(voxelCount * 4);
+    // Preserve the source LUT as floating-point data.
+    // RGBA is used for broad GL ES compatibility even though the LUT
+    // contains RGB grading values.
+    idList<float> lutFloats;
+    lutFloats.SetNum(voxelCount * 4);
 
     for (int i = 0; i < voxelCount; i++) {
         float r = values[i * 3 + 0];
@@ -451,17 +521,17 @@ static bool RB_LoadHDRLutCube(const char* lutName)
         g = idMath::ClampFloat(0.0f, 1.0f, g);
         b = idMath::ClampFloat(0.0f, 1.0f, b);
 
-        lutBytes[i * 4 + 0] = (byte)(r * 255.0f + 0.5f);
-        lutBytes[i * 4 + 1] = (byte)(g * 255.0f + 0.5f);
-        lutBytes[i * 4 + 2] = (byte)(b * 255.0f + 0.5f);
-        lutBytes[i * 4 + 3] = 255;
+        lutFloats[i * 4 + 0] = r;
+        lutFloats[i * 4 + 1] = g;
+        lutFloats[i * 4 + 2] = b;
+        lutFloats[i * 4 + 3] = 1.0f;
     }
 
-    if (hdrLutTexture == 0) {
-        qglGenTextures(1, &hdrLutTexture);
+    if (slot.texture == 0) {
+        qglGenTextures(1, &slot.texture);
     }
 
-    qglBindTexture(GL_TEXTURE_3D, hdrLutTexture);
+    qglBindTexture(GL_TEXTURE_3D, slot.texture);
 
     qglTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     qglTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -480,21 +550,38 @@ static bool RB_LoadHDRLutCube(const char* lutName)
         lutSize,
         0,
         GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        lutBytes.Ptr());
+        GL_FLOAT,
+        lutFloats.Ptr()
+    );
 
     qglBindTexture(GL_TEXTURE_3D, 0);
 
-    hdrLutSize = lutSize;
-    loadedHdrLutName = lutName;
+    slot.size = lutSize;
+    slot.loadedPath = path;
+    slot.valid = true;
 
     common->Printf(
         "Loaded HDR LUT: %s size=%d entries=%d\n",
         path.c_str(),
-        hdrLutSize,
+        slot.size,
         values.Num() / 3);
 
     return true;
+}
+
+static bool RB_LoadLegacyHDRLutCube(
+    hdrLutSlot_t& slot,
+    const char* lutName)
+{
+    if (!lutName || !lutName[0]) {
+        return false;
+    }
+
+    idStr path = "LUTs/";
+    path += lutName;
+    path += ".cube";
+
+    return RB_LoadHDRLutCube(slot, path.c_str());
 }
 
 static void RB_HDR_DebugReadPixel(
@@ -1469,62 +1556,6 @@ static void RB_HDR_DownsamplePass(
     }
 }
 
-static void RB_HDR_UpdateExposure()
-{
-    if (!r_hdrAutoExposure.GetBool())
-    {
-        hdrCurrentExposure = r_hdrExposure.GetFloat();
-        hdrTargetExposure = hdrCurrentExposure;
-        return;
-    }
-
-    const float sceneLuminance =
-        RB_HDR_SampleSceneLuminance();
-
-    const float middleGray =
-        r_hdrMiddleGray.GetFloat();
-
-    const float safeLuminance =
-        (sceneLuminance > 0.01f)
-        ? sceneLuminance
-        : 0.01f;
-
-    hdrTargetExposure =
-        middleGray / safeLuminance;
-
-    hdrTargetExposure =
-        idMath::ClampFloat(
-            r_hdrExposureMin.GetFloat(),
-            r_hdrExposureMax.GetFloat(),
-            hdrTargetExposure);
-
-    float delta =
-        hdrTargetExposure - hdrCurrentExposure;
-
-    const float deadZone =
-        idMath::ClampFloat(
-            0.0f,
-            1.0f,
-            r_hdrExposureDeadZone.GetFloat()
-        );
-
-    if (delta > -deadZone && delta < deadZone)
-    {
-        return;
-    }
-
-    const float adaptationSpeed =
-        (delta > 0.0f)
-        ? r_hdrAdaptationBrightenSpeed.GetFloat()
-        : r_hdrAdaptationDarkenSpeed.GetFloat();
-
-    const float speed =
-        adaptationSpeed * (1.0f / 60.0f);
-
-    hdrCurrentExposure +=
-        delta * speed;
-}
-
 static void RB_HDR_Tonemap()
 {
     if (!r_hdr.GetBool() ||
@@ -1597,34 +1628,103 @@ static void RB_HDR_Tonemap()
         3
     );
 
-    bool lutActive = false;
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 4),
+        4
+    );
 
-    if (r_hdrLutEnable.GetBool()) {
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 5),
+        5
+    );
 
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 6),
+        6
+    );
+
+    bool lutActive[HDR_MULTI_LUT_COUNT] = {
+        false,
+        false,
+        false,
+        false
+    };
+
+    float lutWeights[HDR_MULTI_LUT_COUNT] = {
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f
+    };
+
+    if (r_hdrMultiLutEnable.GetBool()) {
+        const char* lutPaths[HDR_MULTI_LUT_COUNT] = {
+            r_lutFile1.GetString(),
+            r_lutFile2.GetString(),
+            r_lutFile3.GetString(),
+            r_lutFile4.GetString()
+        };
+
+        const float requestedWeights[HDR_MULTI_LUT_COUNT] = {
+            r_lutBlend1.GetFloat(),
+            r_lutBlend2.GetFloat(),
+            r_lutBlend3.GetFloat(),
+            r_lutBlend4.GetFloat()
+        };
+
+        for (int i = 0; i < HDR_MULTI_LUT_COUNT; i++) {
+            lutWeights[i] = idMath::ClampFloat(
+                0.0f,
+                1.0f,
+                requestedWeights[i]
+            );
+
+            if (lutWeights[i] <= 0.0f) {
+                continue;
+            }
+
+            lutActive[i] = RB_LoadHDRLutCube(
+                hdrLutSlots[i],
+                lutPaths[i]
+            );
+
+            if (!lutActive[i]) {
+                lutWeights[i] = 0.0f;
+            }
+        }
+    }
+    else if (r_hdrLutEnable.GetBool()) {
         int lutIndex;
 
         if (r_hdrLutAuto.GetBool()) {
             lutIndex = RB_GetAutoHDRLut();
         }
         else {
-            lutIndex =
-                idMath::ClampInt(
-                    0,
-                    HDRLUT_COUNT - 1,
-                    r_hdrLut.GetInteger()
-                );
+            lutIndex = idMath::ClampInt(
+                0,
+                HDRLUT_COUNT - 1,
+                r_hdrLut.GetInteger()
+            );
         }
 
-        const char* lutName =
-            hdrLutNames[lutIndex];
+        const char* lutName = hdrLutNames[lutIndex];
 
-        lutActive = RB_LoadHDRLutCube(
+        lutActive[0] = RB_LoadLegacyHDRLutCube(
+            hdrLutSlots[0],
             lutName
         );
+
+        lutWeights[0] = lutActive[0]
+            ? idMath::ClampFloat(
+                0.0f,
+                1.0f,
+                r_hdrLutStrength.GetFloat()
+            )
+            : 0.0f;
     }
 
     float exposure[4] = {
-       hdrCurrentExposure,
+       1.0f,
        r_hdrGamma.GetFloat(),
        r_hdrSaturation.GetFloat(),
        r_hdrContrast.GetFloat()
@@ -1635,16 +1735,40 @@ static void RB_HDR_Tonemap()
         exposure
     );
 
+    float activeLutSize = 0.0f;
+
+    for (int i = 0; i < HDR_MULTI_LUT_COUNT; i++) {
+        if (lutActive[i] &&
+            hdrLutSlots[i].valid &&
+            hdrLutSlots[i].size > 0) {
+            activeLutSize = (float)hdrLutSlots[i].size;
+            break;
+        }
+    }
+
     float lutParms[4] = {
-        lutActive ? 1.0f : 0.0f,
-        r_hdrLutStrength.GetFloat(),
-        (float)hdrLutSize,
+        r_hdrMultiLutEnable.GetBool() ? 2.0f :
+            (lutActive[0] ? 1.0f : 0.0f),
+        lutWeights[0],
+        activeLutSize,
         r_hdrBloomStrength.GetFloat()
+    };
+
+    float multiLutParms[4] = {
+        lutActive[0] ? lutWeights[0] : 0.0f,
+        lutActive[1] ? lutWeights[1] : 0.0f,
+        lutActive[2] ? lutWeights[2] : 0.0f,
+        lutActive[3] ? lutWeights[3] : 0.0f
     };
 
     GL_Uniform4fv(
         SHADER_PARMS_ADDR(u_uniformParm, 1),
         lutParms
+    );
+
+    GL_Uniform4fv(
+        SHADER_PARMS_ADDR(u_uniformParm, 2),
+        multiLutParms
     );
 
     static const float vertices[] = {
@@ -1680,28 +1804,36 @@ static void RB_HDR_Tonemap()
             globalImages->hdrExposureImageA->Bind();
         }
 
-        GLint boundExposureTexture = 0;
-
         GL_SelectTextureForce(0);
 
-    if (lutActive && hdrLutTexture != 0) {
-        GL_SelectTexture(1);
+        static const int lutTextureUnits[HDR_MULTI_LUT_COUNT] = {
+            1, 4, 5, 6
+        };
 
-        qglBindTexture(
-            GL_TEXTURE_3D,
-            hdrLutTexture
-        );
+        for (int i = 0; i < HDR_MULTI_LUT_COUNT; i++) {
+            if (!lutActive[i] ||
+                !hdrLutSlots[i].valid ||
+                hdrLutSlots[i].texture == 0) {
+                continue;
+            }
+
+            GL_SelectTexture(lutTextureUnits[i]);
+
+            qglBindTexture(
+                GL_TEXTURE_3D,
+                hdrLutSlots[i].texture
+            );
+        }
 
         GL_SelectTexture(0);
-    }
 
-    GL_EnableVertexAttribArray(
-        SHADER_PARM_ADDR(attr_Vertex)
-    );
+        GL_EnableVertexAttribArray(
+            SHADER_PARM_ADDR(attr_Vertex)
+        );
 
-    GL_EnableVertexAttribArray(
-        SHADER_PARM_ADDR(attr_TexCoord)
-    );
+        GL_EnableVertexAttribArray(
+            SHADER_PARM_ADDR(attr_TexCoord)
+        );
 
     GL_VertexAttribPointer(
         offsetof(shaderProgram_t, attr_Vertex),
@@ -1723,11 +1855,17 @@ static void RB_HDR_Tonemap()
 
     qglDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    if (lutActive && hdrLutTexture != 0) {
-        GL_SelectTexture(1);
+    for (int i = 0; i < HDR_MULTI_LUT_COUNT; i++) {
+        if (!lutActive[i] ||
+            hdrLutSlots[i].texture == 0) {
+            continue;
+        }
+
+        GL_SelectTexture(lutTextureUnits[i]);
         qglBindTexture(GL_TEXTURE_3D, 0);
-        GL_SelectTexture(0);
     }
+
+    GL_SelectTexture(0);
 
     GL_SelectTexture(2);
     qglBindTexture(GL_TEXTURE_2D, 0);
@@ -2785,8 +2923,6 @@ void RB_PP_Render(void)
     );
          
     RB_HDR_ExposurePass();
-
-   // RB_HDR_UpdateExposure();
 
     RB_HDR_Tonemap();
 
