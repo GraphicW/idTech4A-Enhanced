@@ -75,8 +75,26 @@ void	RB_GLSL_DrawInteraction(const drawInteraction_t *din)
                 }
                 else
                 {
-                    float se[] = { harm_r_specularExponentPBR.GetFloat(), harm_r_PBRNormalCorrection.GetFloat(), harm_r_PBRRoughnessCorrection.GetFloat(), harm_r_PBRMetallicCorrection.GetFloat() };
-                    GL_Uniform4fv(offsetof(shaderProgram_t, specularExponent), se);
+					float se[4];
+
+					if (harm_r_materialClass.GetInteger() == 1) // D3HDP
+					{
+						se[0] = harm_r_specularExponentPBR.GetFloat();
+						se[1] = harm_r_PBRNormalCorrection.GetFloat();
+
+						// sentinel values for D3HDP mode
+						se[2] = -999.0f;
+						se[3] = -999.0f;
+					}
+					else
+					{
+						se[0] = harm_r_specularExponentPBR.GetFloat();
+						se[1] = harm_r_PBRNormalCorrection.GetFloat();
+						se[2] = harm_r_PBRRoughnessCorrection.GetFloat();
+						se[3] = harm_r_PBRMetallicCorrection.GetFloat();
+					}
+
+					GL_Uniform4fv(offsetof(shaderProgram_t, specularExponent), se);
                 }
                 break;
             case LM_AMBIENT:
