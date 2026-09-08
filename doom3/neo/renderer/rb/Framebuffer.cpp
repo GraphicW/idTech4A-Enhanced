@@ -917,6 +917,10 @@ void Framebuffer::Init()
 		globalImages->hdrExposureImageA
 	);
 	hdrExposureFramebufferA->Check();
+
+	qglClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	qglClear(GL_COLOR_BUFFER_BIT);
+
 	hdrExposureFramebufferA->Unbind();
 
 	hdrExposureFramebufferB = Framebuffer::Alloc(
@@ -930,6 +934,10 @@ void Framebuffer::Init()
 		globalImages->hdrExposureImageB
 	);
 	hdrExposureFramebufferB->Check();
+
+	qglClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	qglClear(GL_COLOR_BUFFER_BIT);
+
 	hdrExposureFramebufferB->Unbind();
 
 	if (globalImages->mirrorImage == NULL) {

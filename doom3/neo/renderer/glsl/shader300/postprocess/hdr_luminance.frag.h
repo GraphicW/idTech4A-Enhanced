@@ -23,6 +23,13 @@ GLSL_SHADER const char ES3_HDR_LUMINANCE_FRAG[] =
 "\n"
 "    float lum = Luminance(hdrColor);\n"
 "\n"
+"    lum = log(\n"
+"        max(\n"
+"            lum,\n"
+"            0.0001\n"
+"        )\n"
+"    );\n"
+"\n"
 "    _gl_FragColor = vec4(lum, lum, lum, 1.0);\n"
 "}\n"
 ;
