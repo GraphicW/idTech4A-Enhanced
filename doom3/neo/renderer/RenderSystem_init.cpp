@@ -81,6 +81,7 @@ idCVar r_noLight("r_noLight", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_INIT, "light
 idCVar r_useETC1("r_useETC1", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_INIT, "use ETC1 compression");
 idCVar r_useETC1Cache("r_useETC1cache", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_INIT, "use ETC1 compression");
 idCVar r_useDXT("r_useDXT", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_INIT, "use DXT compression if possible");
+idCVar harm_r_materialClass("harm_r_materialClass", "1", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER, "Material interpretation class. 0=Legacy, 1=D3HDP, 2=TruePBR", 0, 2);
 #ifdef _OPENGLES3
 idCVar r_useETC2("r_useETC2", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_INIT, "use ETC2 compression on OpenGLES3.0+");
 #endif

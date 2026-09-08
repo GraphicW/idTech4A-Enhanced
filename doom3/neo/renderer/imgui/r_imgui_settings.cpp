@@ -905,6 +905,7 @@ void ImGui_RegisterOptions(void)
     ImGui_RegisterDivide(IG_CVAR_GROUP_RENDERER);
 
     ImGui_RegisterLabel("Shader", IG_CVAR_GROUP_RENDERER);
+    ImGui_RegisterCvar("harm_r_materialClass", "Material Class", IG_CVAR_COMPONENT_COMBO, "0=Legacy;1=D3HDP;2=TruePBR");
     ImGui_RegisterCvar("harm_r_useHighPrecision", "Use high precision float on GLSL shader", IG_CVAR_COMPONENT_CHECKBOX);
     ImGui_RegisterCvar("harm_r_shaderProgramDir", "External OpenGLES2 GLSL shader path");
 #ifdef GL_ES_VERSION_3_0

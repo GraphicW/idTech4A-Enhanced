@@ -1140,8 +1140,9 @@ extern idCVar r_znear;					// near Z clip plane
 extern idCVar r_noLight;				// no lighting
 #endif
 extern idCVar r_useETC1;				// ETC1 compression
-extern idCVar r_useETC1Cache;				// use ETC1 cache
+extern idCVar r_useETC1Cache;			// use ETC1 cache
 extern idCVar r_useDXT;					// DXT compression
+extern idCVar harm_r_materialClass;     // material class to use for all materials, evntual goal
 #ifdef _OPENGLES3
 extern idCVar r_useETC2;				// ETC2 compression
 
