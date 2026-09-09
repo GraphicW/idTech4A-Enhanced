@@ -441,6 +441,38 @@ static infoParm_t	infoParms[] = {
 
 static const int numInfoParms = sizeof(infoParms) / sizeof(infoParms[0]);
 
+/*
+========================
+D3HDP_MaterialClassName
+========================
+*/
+static const char* D3HDP_MaterialClassName(
+	d3hdpMaterialClass_t materialClass)
+{
+	switch (materialClass)
+	{
+	case D3HDP_MAT_INDUSTRIAL_METAL:
+		return "INDUSTRIAL_METAL";
+
+	case D3HDP_MAT_COMPOSITE:
+		return "COMPOSITE";
+
+	case D3HDP_MAT_GLASS:
+		return "GLASS";
+
+	case D3HDP_MAT_STONE:
+		return "STONE";
+
+	case D3HDP_MAT_WOOD:
+		return "WOOD";
+
+	case D3HDP_MAT_ORGANIC:
+		return "ORGANIC";
+
+	default:
+		return "UNKNOWN";
+	}
+}
 
 /*
 ===============
@@ -464,8 +496,44 @@ bool idMaterial::CheckSurfaceParm(idToken *token)
 			surfaceFlags |= infoParms[i].surfaceFlags;
 			contentFlags |= infoParms[i].contents;
 
+			switch (infoParms[i].surfaceFlags & SURF_TYPE_MASK)
+			{
+			case SURFTYPE_METAL:
+				d3hdpMaterialClass = D3HDP_MAT_INDUSTRIAL_METAL;
+				break;
+
+			case SURFTYPE_STONE:
+				d3hdpMaterialClass = D3HDP_MAT_STONE;
+				break;
+
+			case SURFTYPE_FLESH:
+				d3hdpMaterialClass = D3HDP_MAT_ORGANIC;
+				break;
+
+			case SURFTYPE_WOOD:
+				d3hdpMaterialClass = D3HDP_MAT_WOOD;
+				break;
+
+#ifndef _HUMANHEAD
+			case SURFTYPE_GLASS:
+				d3hdpMaterialClass = D3HDP_MAT_GLASS;
+				break;
+#endif
+
+			default:
+				break;
+			}
+
 			if (infoParms[i].clearSolid) {
 				contentFlags &= ~CONTENTS_SOLID;
+			}
+
+			if (d3hdpMaterialClass != D3HDP_MAT_UNKNOWN)
+			{
+				common->Printf(
+					"D3HDP: %s -> %s\n",
+					GetName(),
+					D3HDP_MaterialClassName(d3hdpMaterialClass));
 			}
 
 			return true;
