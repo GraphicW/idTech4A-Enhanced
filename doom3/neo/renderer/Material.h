@@ -787,6 +787,31 @@ typedef enum {
 } portalFlags_t;
 #endif
 
+/*
+===============================================================================
+ 
+D3HDP physical material classification
+ 
+This is independent of Doom 3 SURFTYPE metadata, which is primarily
+used for gameplay, collision, impact, and sound behavior.
+ 
+===============================================================================
+*/
+
+enum d3hdpMaterialClass_t
+{
+	D3HDP_MAT_UNKNOWN = 0,
+
+	D3HDP_MAT_INDUSTRIAL_METAL,
+	D3HDP_MAT_COMPOSITE,
+	D3HDP_MAT_GLASS,
+	D3HDP_MAT_STONE,
+	D3HDP_MAT_WOOD,
+	D3HDP_MAT_ORGANIC,
+
+	D3HDP_MAT_COUNT
+};
+
 class idSoundEmitter;
 
 class idMaterial : public idDecl
@@ -1018,6 +1043,15 @@ class idMaterial : public idDecl
 		// get surface flags
 		const int			GetSurfaceFlags(void) const {
 			return surfaceFlags;
+		}
+
+		// D3HDP physical material classification
+		d3hdpMaterialClass_t GetD3HDPMaterialClass(void) const {
+			return d3hdpMaterialClass;
+		}
+
+		void SetD3HDPMaterialClass(d3hdpMaterialClass_t materialClass) {
+			d3hdpMaterialClass = materialClass;
 		}
 
 		// gets name for surface type (stone, metal, flesh, etc.)
@@ -1293,13 +1327,16 @@ class idMaterial : public idDecl
 
 		int					spectrum;			// for invisible writing, used for both lights and surfaces
 
-		float				polygonOffset;
+		float               polygonOffset;
 
-		int					contentFlags;		// content flags
-		int					surfaceFlags;		// surface flags
-		mutable int			materialFlags;		// material flags
+		int                 contentFlags;      // for collision detection, etc
+		int                 surfaceFlags;      // for collision detection, etc
+		mutable int         materialFlags;     // for material properties, like MF_NOSHADOWS, MF_FORCESHADOWS, etc
 
-		decalInfo_t			decalInfo;
+		// D3HDP physical material classification
+		d3hdpMaterialClass_t d3hdpMaterialClass;  // for D3HDP, used for material classification
+
+		decalInfo_t         decalInfo;
 
 
 		mutable	float		sort;				// lower numbered shaders draw before higher numbered

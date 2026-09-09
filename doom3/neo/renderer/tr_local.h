@@ -200,7 +200,6 @@ SURFACES
 #include "ModelOverlay.h"
 #include "Interaction.h"
 
-
 // drawSurf_t structures command the back end to render surfaces
 // a given srfTriangles_t may be used with multiple viewEntity_t,
 // as when viewed in a subview or multiple viewport render, or
