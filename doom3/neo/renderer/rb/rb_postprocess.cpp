@@ -228,6 +228,34 @@ idCVar r_ssgi(
     "Enable SSGI"
 );
 
+idCVar r_ssgiHistoryWeight(
+    "r_ssgiHistoryWeight",
+    "0.80",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "SSGI temporal history blend weight"
+);
+
+idCVar r_ssgiDepthThreshold(
+    "r_ssgiDepthThreshold",
+    "0.003",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "SSGI history depth compatibility threshold"
+);
+
+idCVar r_ssgiNormalThreshold(
+    "r_ssgiNormalThreshold",
+    "0.90",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "SSGI history normal compatibility threshold"
+);
+
+idCVar r_ssgiIndirectScale(
+    "r_ssgiIndirectScale",
+    "0.15",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "SSGI indirect lighting scale"
+);
+
 idCVar r_ao(
     "r_ao",
     "1",
@@ -2380,6 +2408,20 @@ static void RB_SSGITrace()
         SHADER_PARM_ADDR(gtaoHistoryValid),
         canUseHistory ? 1 : 0
     );
+
+    float ssgiParms[4] =
+    {
+        r_ssgiHistoryWeight.GetFloat(),
+        r_ssgiDepthThreshold.GetFloat(),
+        r_ssgiNormalThreshold.GetFloat(),
+        r_ssgiIndirectScale.GetFloat()
+    };
+
+    GL_Uniform4fv(
+        SHADER_PARM_ADDR(ssgiParms),
+        ssgiParms
+    );
+
 
     float ssgiFrameParms[4] =
     {

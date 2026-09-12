@@ -1927,9 +1927,10 @@ typedef struct shaderProgram_s {
 	GLint       projectionParams;
 
 	GLint       ssgiCurrentViewToPreviousClip;
+	GLint       ssgiParms;
 
-	GLint		gtaoPass;
-	GLint		gtaoHistoryValid;
+	GLint       gtaoPass;
+	GLint       gtaoHistoryValid;
 
 	GLint		clipPlane;
 	GLint		fogMatrix;

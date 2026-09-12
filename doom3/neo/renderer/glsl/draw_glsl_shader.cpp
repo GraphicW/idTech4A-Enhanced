@@ -500,6 +500,7 @@ static void RB_GLSL_GetUniformLocations(shaderProgram_t *shader)
 	shader->projectionParams = GL_GetUniformLocation(shader->program, "u_projectionParams");
 	shader->ssgiCurrentViewToPreviousClip =	GL_GetUniformLocation(shader->program, "u_ssgiCurrentViewToPreviousClip");
 	shader->gtaoPass = GL_GetUniformLocation(shader->program, "u_gtaoPass");
+	shader->ssgiParms = GL_GetUniformLocation(shader->program, "u_ssgiParms");
 	shader->gtaoHistoryValid = GL_GetUniformLocation(shader->program, "u_gtaoHistoryValid");
 	//k: add clip plane uniform
 	shader->clipPlane = GL_GetUniformLocation(shader->program, "u_clipPlane");
