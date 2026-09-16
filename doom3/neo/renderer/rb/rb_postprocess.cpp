@@ -2361,17 +2361,17 @@ static void RB_SSGITrace()
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
+    float inverseCurrentView[16];
+
+    R_MatrixFullInverse(
+        backEnd.viewDef->worldSpace.modelViewMatrix,
+        inverseCurrentView
+    );
+
     float currentViewToPreviousClip[16];
 
     if (canUseHistory)
     {
-        float inverseCurrentView[16];
-
-        R_MatrixFullInverse(
-            backEnd.viewDef->worldSpace.modelViewMatrix,
-            inverseCurrentView
-        );
-
         myGlMultMatrix(
             inverseCurrentView,
             ssgiPrevViewProjectionMatrix,
@@ -2399,6 +2399,9 @@ static void RB_SSGITrace()
     GL_SelectTexture(3);
     ssgiReadImage->Bind();
 
+    GL_SelectTexture(4);
+    bentNormalReadImage->Bind();
+
     GL_SelectTexture(0);
 
     GL_Uniform1i(
@@ -2421,9 +2424,19 @@ static void RB_SSGITrace()
         3
     );
 
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 4),
+        4
+    );
+
     GL_UniformMatrix4fv(
         SHADER_PARM_ADDR(ssgiCurrentViewToPreviousClip),
         currentViewToPreviousClip
+    );
+
+    GL_UniformMatrix4fv(
+        SHADER_PARM_ADDR(ssgiViewToWorld),
+        inverseCurrentView
     );
 
     GL_Uniform1i(
@@ -2843,6 +2856,11 @@ static void RB_SSGI()
         SHADER_PARMS_ADDR(u_fragmentMap, 4),
         4
     );
+
+    GL_Uniform1i(
+        SHADER_PARMS_ADDR(u_fragmentMap, 5),
+        5
+    );
    
     float parm[4];
 
@@ -2952,6 +2970,9 @@ static void RB_SSGI()
 
     GL_SelectTexture(4);
     globalImages->frameImage->Bind();
+
+    GL_SelectTexture(5);
+    bentNormalCurrentImage->Bind();
 
     GL_SelectTexture(0);
 

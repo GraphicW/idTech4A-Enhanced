@@ -499,6 +499,7 @@ static void RB_GLSL_GetUniformLocations(shaderProgram_t *shader)
 	shader->projectionMatrix = GL_GetUniformLocation(shader->program, "u_projectionMatrix");
 	shader->projectionParams = GL_GetUniformLocation(shader->program, "u_projectionParams");
 	shader->ssgiCurrentViewToPreviousClip =	GL_GetUniformLocation(shader->program, "u_ssgiCurrentViewToPreviousClip");
+	shader->ssgiViewToWorld = GL_GetUniformLocation(shader->program, "u_ssgiViewToWorld");
 	shader->gtaoPass = GL_GetUniformLocation(shader->program, "u_gtaoPass");
 	shader->ssgiParms = GL_GetUniformLocation(shader->program, "u_ssgiParms");
 	shader->ssgiOutputMode = GL_GetUniformLocation(shader->program,	"u_ssgiOutputMode");

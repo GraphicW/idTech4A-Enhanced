@@ -1927,6 +1927,7 @@ typedef struct shaderProgram_s {
 	GLint       projectionParams;
 
 	GLint       ssgiCurrentViewToPreviousClip;
+	GLint       ssgiViewToWorld;
 	GLint       ssgiParms;
 	GLint       ssgiOutputMode;
 
