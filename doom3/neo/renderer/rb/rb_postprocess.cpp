@@ -256,6 +256,13 @@ idCVar r_ssgiIndirectScale(
     "SSGI indirect lighting scale"
 );
 
+idCVar r_ssgiBentInfluence(
+    "r_ssgiBentInfluence",
+    "0",
+    CVAR_RENDERER | CVAR_ARCHIVE,
+    "bent normal indirect lighting influence"
+);
+
 idCVar r_ao(
     "r_ao",
     "1",
@@ -2777,6 +2784,11 @@ static void RB_SSGI()
     GL_Uniform1f(
         SHADER_PARM_ADDR(aoIntensity),
         r_aoIntensity.GetFloat()
+    );
+
+    GL_Uniform1f(
+        SHADER_PARM_ADDR(ssgiBentInfluence),
+        r_ssgiBentInfluence.GetFloat()
     );
 
     GL_Uniform1f(

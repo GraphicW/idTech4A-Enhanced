@@ -1930,6 +1930,7 @@ typedef struct shaderProgram_s {
 	GLint       ssgiViewToWorld;
 	GLint       ssgiParms;
 	GLint       ssgiOutputMode;
+	GLint		ssgiBentInfluence;
 
 	GLint       gtaoPass;
 	GLint       gtaoHistoryValid;
