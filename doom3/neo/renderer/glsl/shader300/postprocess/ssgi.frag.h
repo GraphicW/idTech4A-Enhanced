@@ -201,6 +201,8 @@ GLSL_SHADER const char ES3_SSGI_FRAG[] =
 "    float bentVisibility = clamp(worldBentNormal.z * 0.5 + 0.5, 0.0, 1.0);\n"
 "    vec3 indirect = clamp(filteredSSGI.rgb / (filteredSSGI.rgb + vec3(1.0)), 0.0, 1.0) * u_ssgiParms.w;\n"
 "\n"
+"    float bentVisibility = clamp(worldBentNormal.z * 0.5 + 0.5, 0.0, 1.0);\n"
+"\n"
 "    float bentWeight = mix(\n"
 "        1.0,\n"
 "        bentVisibility,\n"
