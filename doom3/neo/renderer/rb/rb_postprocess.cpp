@@ -2563,6 +2563,24 @@ static void RB_SSGITrace()
 
     ssgiWriteFramebuffer->Unbind();
 
+    idFramebuffer* bentNormalWriteFramebuffer =
+        ssgiWriteA
+        ? bentNormalFramebufferA
+        : bentNormalFramebufferB;
+
+    bentNormalWriteFramebuffer->Bind();
+
+    qglClearColor(
+        1.0f,
+        0.0f,
+        1.0f,
+        1.0f
+    );
+
+    qglClear(GL_COLOR_BUFFER_BIT);
+
+    bentNormalWriteFramebuffer->Unbind();
+
     /*
     Restore state.
     */
