@@ -612,6 +612,8 @@ class idImageManager
 		idImage* ssgiRadianceImage;
 		idImage* ssgiRadianceImageA;
 		idImage* ssgiRadianceImageB;
+		idImage* bentNormalImageA;
+		idImage* bentNormalImageB;
 #endif
 
 };

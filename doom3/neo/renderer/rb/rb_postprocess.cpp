@@ -2211,6 +2211,8 @@ static void RB_HDR_CAS()
 
 static idImage* ssgiCurrentRadianceImage = NULL;
 
+static idImage* bentNormalCurrentImage = NULL;
+
 static float ssgiPrevModelViewMatrix[16];
 static float ssgiPrevProjectionMatrix[16];
 static float ssgiPrevViewProjectionMatrix[16];
@@ -2230,6 +2232,7 @@ static void RB_SSGITrace()
         )
     {
         ssgiCurrentRadianceImage = NULL;
+        bentNormalCurrentImage = NULL;
         return;
     }
 
@@ -2250,6 +2253,16 @@ static void RB_SSGITrace()
         ssgiWriteA
         ? globalImages->ssgiRadianceImageA
         : globalImages->ssgiRadianceImageB;
+
+    idImage* bentNormalReadImage =
+        ssgiWriteA
+        ? globalImages->bentNormalImageB
+        : globalImages->bentNormalImageA;
+
+    idImage* bentNormalOutputImage =
+        ssgiWriteA
+        ? globalImages->bentNormalImageA
+        : globalImages->bentNormalImageB;
 
     GLboolean depthMask;
     GLint bufferId;
@@ -2601,6 +2614,9 @@ static void RB_SSGITrace()
     // in the same frame, which was causing the 1.5s stall.
     ssgiCurrentRadianceImage =
         ssgiReadImage;
+
+    bentNormalCurrentImage =
+        bentNormalReadImage;
 
     ssgiHistoryValid = true;
     ssgiWriteA = !ssgiWriteA;

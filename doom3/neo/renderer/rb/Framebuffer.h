@@ -88,6 +88,8 @@ extern idFramebuffer* geometricNormalFramebuffer;
 extern idFramebuffer* ssgiRadianceFramebuffer;
 extern idFramebuffer* ssgiRadianceFramebufferA;
 extern idFramebuffer* ssgiRadianceFramebufferB;
+extern idFramebuffer* bentNormalFramebufferA;
+extern idFramebuffer* bentNormalFramebufferB;
 extern idFramebuffer* gtaoFramebufferA;
 extern idFramebuffer* gtaoFramebufferB;
 #endif

@@ -76,6 +76,8 @@ idFramebuffer* geometricNormalFramebuffer = NULL;
 idFramebuffer* ssgiRadianceFramebuffer = NULL;
 idFramebuffer* ssgiRadianceFramebufferA = NULL;
 idFramebuffer* ssgiRadianceFramebufferB = NULL;
+idFramebuffer* bentNormalFramebufferA = NULL;
+idFramebuffer* bentNormalFramebufferB = NULL;
 idFramebuffer* gtaoFramebufferA = NULL;
 idFramebuffer* gtaoFramebufferB = NULL;
 
@@ -599,6 +601,16 @@ void Framebuffer::Init()
 		globalImages->ssgiRadianceImageB = new idImage;
 	}
 
+	if (globalImages->bentNormalImageA == NULL)
+	{
+		globalImages->bentNormalImageA = new idImage;
+	}
+
+	if (globalImages->bentNormalImageB == NULL)
+	{
+		globalImages->bentNormalImageB = new idImage;
+	}
+
 	globalImages->ssgiRadianceImage->GenerateHDRImage(
 		glConfig.vidWidth,
 		glConfig.vidHeight,
@@ -614,6 +626,20 @@ void Framebuffer::Init()
 	);
 
 	globalImages->ssgiRadianceImageB->GenerateHDRImage(
+		glConfig.vidWidth,
+		glConfig.vidHeight,
+		TF_LINEAR,
+		TR_CLAMP
+	);
+
+	globalImages->bentNormalImageA->GenerateHDRImage(
+		glConfig.vidWidth,
+		glConfig.vidHeight,
+		TF_LINEAR,
+		TR_CLAMP
+	);
+
+	globalImages->bentNormalImageB->GenerateHDRImage(
 		glConfig.vidWidth,
 		glConfig.vidHeight,
 		TF_LINEAR,
@@ -700,6 +726,39 @@ void Framebuffer::Init()
 	ssgiRadianceFramebufferB->Check();
 
 	ssgiRadianceFramebufferB->Unbind();
+
+	bentNormalFramebufferA = Framebuffer::Alloc(
+		"_bentNormalFramebufferA",
+		glConfig.vidWidth,
+		glConfig.vidHeight
+	);
+
+	bentNormalFramebufferA->Bind();
+
+	bentNormalFramebufferA->AttachImage2D(
+		globalImages->bentNormalImageA
+	);
+
+	bentNormalFramebufferA->Check();
+
+	bentNormalFramebufferA->Unbind();
+
+
+	bentNormalFramebufferB = Framebuffer::Alloc(
+		"_bentNormalFramebufferB",
+		glConfig.vidWidth,
+		glConfig.vidHeight
+	);
+
+	bentNormalFramebufferB->Bind();
+
+	bentNormalFramebufferB->AttachImage2D(
+		globalImages->bentNormalImageB
+	);
+
+	bentNormalFramebufferB->Check();
+
+	bentNormalFramebufferB->Unbind();
 
 	gtaoFramebufferA = Framebuffer::Alloc(
 		"_gtaoFramebufferA",
@@ -1041,6 +1100,8 @@ void Framebuffer::Shutdown()
 	ssgiRadianceFramebuffer = NULL;
 	ssgiRadianceFramebufferA = NULL;
 	ssgiRadianceFramebufferB = NULL;
+	bentNormalFramebufferA = NULL;
+	bentNormalFramebufferB = NULL;
 	mirrorFramebuffer = NULL;
 	hdrBloomFramebufferA = NULL;
 	hdrBloomFramebufferB = NULL;
