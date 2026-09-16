@@ -1928,6 +1928,7 @@ typedef struct shaderProgram_s {
 
 	GLint       ssgiCurrentViewToPreviousClip;
 	GLint       ssgiParms;
+	GLint       ssgiOutputMode;
 
 	GLint       gtaoPass;
 	GLint       gtaoHistoryValid;

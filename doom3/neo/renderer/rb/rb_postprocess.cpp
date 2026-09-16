@@ -2224,8 +2224,12 @@ static void RB_SSGITrace()
     if (
         ssgiRadianceFramebufferA == NULL ||
         ssgiRadianceFramebufferB == NULL ||
+        bentNormalFramebufferA == NULL ||
+        bentNormalFramebufferB == NULL ||
         globalImages->ssgiRadianceImageA == NULL ||
         globalImages->ssgiRadianceImageB == NULL ||
+        globalImages->bentNormalImageA == NULL ||
+        globalImages->bentNormalImageB == NULL ||
         globalImages->hdrSceneImage == NULL ||
         globalImages->geometricNormalImage == NULL ||
         backEnd.viewDef == NULL
@@ -2243,6 +2247,11 @@ static void RB_SSGITrace()
         ssgiWriteA
         ? ssgiRadianceFramebufferA
         : ssgiRadianceFramebufferB;
+
+    idFramebuffer* bentNormalWriteFramebuffer =
+        ssgiWriteA
+        ? bentNormalFramebufferA
+        : bentNormalFramebufferB;
 
     idImage* ssgiReadImage =
         ssgiWriteA
@@ -2543,11 +2552,55 @@ static void RB_SSGITrace()
         texCoords
     );
 
+    /*
+    Pass 1: SSGI radiance.
+    */
+    GL_Uniform1i(
+        SHADER_PARM_ADDR(ssgiOutputMode),
+        0
+    );
+
     qglDrawArrays(
         GL_TRIANGLE_STRIP,
         0,
         4
     );
+
+    ssgiWriteFramebuffer->Unbind();
+
+    /*
+    Pass 2: encoded bent normal.
+    The shader, texture bindings, uniforms, and vertex arrays
+    remain active from the radiance pass.
+    */
+    bentNormalWriteFramebuffer->Bind();
+
+    qglViewport(
+        0,
+        0,
+        glConfig.vidWidth,
+        glConfig.vidHeight
+    );
+
+    qglScissor(
+        0,
+        0,
+        glConfig.vidWidth,
+        glConfig.vidHeight
+    );
+
+    GL_Uniform1i(
+        SHADER_PARM_ADDR(ssgiOutputMode),
+        1
+    );
+
+    qglDrawArrays(
+        GL_TRIANGLE_STRIP,
+        0,
+        4
+    );
+
+    bentNormalWriteFramebuffer->Unbind();
 
     GL_DisableVertexAttribArray(
         SHADER_PARM_ADDR(attr_Vertex)
@@ -2560,26 +2613,6 @@ static void RB_SSGITrace()
     globalImages->BindNull();
 
     GL_UseProgram(NULL);
-
-    ssgiWriteFramebuffer->Unbind();
-
-    idFramebuffer* bentNormalWriteFramebuffer =
-        ssgiWriteA
-        ? bentNormalFramebufferA
-        : bentNormalFramebufferB;
-
-    bentNormalWriteFramebuffer->Bind();
-
-    qglClearColor(
-        1.0f,
-        0.0f,
-        1.0f,
-        1.0f
-    );
-
-    qglClear(GL_COLOR_BUFFER_BIT);
-
-    bentNormalWriteFramebuffer->Unbind();
 
     /*
     Restore state.
@@ -2634,7 +2667,7 @@ static void RB_SSGITrace()
         ssgiReadImage;
 
     bentNormalCurrentImage =
-        bentNormalReadImage;
+        bentNormalOutputImage;
 
     ssgiHistoryValid = true;
     ssgiWriteA = !ssgiWriteA;
