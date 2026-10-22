@@ -333,6 +333,15 @@ idCVar r_gtaoDirections(
     "Number of GTAO horizon directions"
 );
 
+// DIAGNOSTIC ONLY: SSGI hit-map overlay. 0 = none; 3 = raw hemisphere ray-hit map
+// (white = ray connected this frame, black = no connection), drawn over the back buffer.
+idCVar r_ssgiDebugMode(
+    "r_ssgiDebugMode",
+    "0",
+    CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER,
+    "SSGI debug output mode: 0 = none, 3 = raw ray-found hit map"
+);
+
 enum HDRLutPreset
 {
     HDRLUT_TRUE_NEUTRAL_FILM,
@@ -3091,6 +3100,137 @@ static void RB_SSGI()
     }
 }
 
+/*
+RB_SSGI_RadianceHitMap — DIAGNOSTIC ONLY.
+
+Draws a raw SSGI hit-found map to the back buffer when r_ssgiDebugMode == 3.
+It runs the ray-march trace shader in output mode 3, which emits grayscale
+validity: white where a hemisphere ray connected this frame, black otherwise.
+
+Placed as the FINAL draw in RB_PP_Render (after tonemap + RB_SSGI composite)
+so nothing overwrites the overlay. Reproduces RB_SSGITrace's trace-shader setup
+texture-for-texture so hitFound is computed identically to production.
+*/
+static void RB_SSGI_RadianceHitMap()
+{
+    if (r_ssgiDebugMode.GetInteger() != 3)
+    {
+        return;
+    }
+
+    GL_UseProgram(&ssgiTraceShader);
+
+    // Reuse the trace shader's framebuffer ping-pong read image for fragment unit 3,
+    // exactly as RB_SSGITrace does, so normal reconstruction matches.
+    idImage* debugRead = globalImages->ssgiRadianceImageA;
+    idFramebuffer* debugReadFb = ssgiRadianceFramebufferA;
+
+    if (debugRead == NULL || debugReadFb == NULL)
+    {
+        return;
+    }
+
+    // Depth texture scale (non-power-of-two correction), matches RB_SSGITrace.
+    float depthTextureParms[4];
+    depthTextureParms[0] = (float)depthStencilRenderer.Width() / (float)depthStencilRenderer.UploadWidth();
+    depthTextureParms[1] = (float)depthStencilRenderer.Height() / (float)depthStencilRenderer.UploadHeight();
+    depthTextureParms[2] = 0.0f;
+    depthTextureParms[3] = 0.0f;
+
+    // Projection + view-to-world matrices (needed for view reconstruction).
+    float inverseCurrentView[16];
+    R_MatrixFullInverse(backEnd.viewDef->worldSpace.modelViewMatrix, inverseCurrentView);
+
+    float currentViewToPreviousClip[16];
+    static const float identityMatrix[16] = { 1.0f,0.0f,0.0f,0.0f, 0.0f,1.0f,0.0f,0.0f, 0.0f,0.0f,1.0f,0.0f, 0.0f,0.0f,0.0f,1.0f };
+    memcpy(currentViewToPreviousClip, identityMatrix, sizeof(currentViewToPreviousClip));
+
+    GL_SelectTexture(0);
+    globalImages->hdrSceneImage->Bind();
+
+    GL_SelectTexture(1);
+    depthStencilRenderer.BindDepth();
+
+    GL_SelectTexture(2);
+    globalImages->geometricNormalImage->Bind();
+
+    idImage* debugBent = globalImages->bentNormalImageA;
+
+    GL_SelectTexture(3);
+    debugRead->Bind();
+
+    GL_SelectTexture(4);
+    debugBent->Bind();
+
+    GL_SelectTexture(0);
+
+    GL_Uniform1i(SHADER_PARMS_ADDR(u_fragmentMap, 0), 0);
+    GL_Uniform1i(SHADER_PARMS_ADDR(u_fragmentMap, 1), 1);
+    GL_Uniform1i(SHADER_PARMS_ADDR(u_fragmentMap, 2), 2);
+    GL_Uniform1i(SHADER_PARMS_ADDR(u_fragmentMap, 3), 3);
+    GL_Uniform1i(SHADER_PARMS_ADDR(u_fragmentMap, 4), 4);
+
+    GL_UniformMatrix4fv(SHADER_PARM_ADDR(ssgiCurrentViewToPreviousClip), currentViewToPreviousClip);
+    GL_UniformMatrix4fv(SHADER_PARM_ADDR(ssgiViewToWorld), inverseCurrentView);
+
+    GL_Uniform1i(SHADER_PARM_ADDR(gtaoHistoryValid), 0);
+
+    float ssgiParms[4] = {
+        r_ssgiHistoryWeight.GetFloat(),
+        r_ssgiDepthThreshold.GetFloat(),
+        r_ssgiNormalThreshold.GetFloat(),
+        r_ssgiIndirectScale.GetFloat()
+    };
+    GL_Uniform4fv(SHADER_PARM_ADDR(ssgiParms), ssgiParms);
+
+    float ssgiFrameParms[4] = { (float)(backEnd.frameCount & 15), 0.0f, 0.0f, 0.0f };
+    GL_Uniform4fv(SHADER_PARMS_ADDR(u_uniformParm, 0), ssgiFrameParms);
+
+    float projectionParms[4];
+    projectionParms[0] = backEnd.viewDef->projectionMatrix[0];
+    projectionParms[1] = backEnd.viewDef->projectionMatrix[5];
+    projectionParms[2] = backEnd.viewDef->projectionMatrix[10];
+    projectionParms[3] = backEnd.viewDef->projectionMatrix[14];
+    GL_Uniform4fv(SHADER_PARM_ADDR(projectionParams), projectionParms);
+
+    float windowParms[4] = { 1.0f / glConfig.vidWidth, 1.0f / glConfig.vidHeight, 0.0f, 0.0f };
+    GL_Uniform4fv(SHADER_PARM_ADDR(windowCoords), windowParms);
+
+    float nonPowerOfTwo[4] = { depthTextureParms[0], depthTextureParms[1], 0.0f, 0.0f };
+    GL_Uniform4fv(SHADER_PARM_ADDR(nonPowerOfTwo), nonPowerOfTwo);
+
+    // Fullscreen quad vertex setup (identical to RB_SSGITrace).
+    static const float vertices[] = { -1.0f,-1.0f, 1.0f,-1.0f, -1.0f,1.0f, 1.0f,1.0f };
+    static const float texCoords[] = { 0.0f,0.0f, 1.0f,0.0f, 0.0f,1.0f, 1.0f,1.0f };
+
+    // Client-side (CPU) vertex arrays require GL_ARRAY_BUFFER to be unbound before
+    // GL_VertexAttribPointer receives CPU pointers. Texture Bind() calls earlier in this
+    // function leave a buffer object bound to GL_ARRAY_BUFFER; leaving it bound makes
+    // glDrawArrays fail with GL_INVALID_OPERATION (1282). This is the same guard that
+    // RB_SSGITrace applies before its own quad draw.
+    qglBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    GL_EnableVertexAttribArray(SHADER_PARM_ADDR(attr_Vertex));
+    GL_EnableVertexAttribArray(SHADER_PARM_ADDR(attr_TexCoord));
+    GL_VertexAttribPointer(offsetof(shaderProgram_t, attr_Vertex), 2, GL_FLOAT, false, 0, vertices);
+    GL_VertexAttribPointer(offsetof(shaderProgram_t, attr_TexCoord), 2, GL_FLOAT, false, 0, texCoords);
+
+    // Emit hit-found map (mode 3) to the back buffer.
+    // Disable depth test: a prior composite pass can leave a depth buffer active on the
+    // back target, which would cull this fullscreen quad and silently draw nothing.
+    GLboolean saveDepthEnabled = qglIsEnabled(GL_DEPTH_TEST);
+    if (saveDepthEnabled) {
+        qglDisable(GL_DEPTH_TEST);
+    }
+
+    Framebuffer::BindNull();
+    qglViewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+    qglScissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+    GL_Uniform1i(SHADER_PARM_ADDR(ssgiOutputMode), 3);
+
+    qglDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
 void RB_PP_Render(void)
 {
     RB_SSGITrace();
@@ -3140,6 +3280,9 @@ void RB_PP_Render(void)
     RB_HDR_CAS();
 
     RB_SSGI();
+
+    // DIAGNOSTIC ONLY: final SSGI hit-found overlay. Drawn last so tonemap/composite above can't clobber it.
+    RB_SSGI_RadianceHitMap();
 
     if (r_renderMode.GetInteger() == 0)
         return;
